@@ -1,0 +1,99 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Basic Interface</title>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+<script src="http://localhost:3000/socketio/socket.io.js"></script> 
+<script type="text/javascript">
+$(document).ready(function(){
+	var server_url = "localhost";
+	var socket;
+	
+	try{
+		io.setPath('/socketio/');
+    WEB_SOCKET_SWF_LOCATION = '/socketio/lib/vendor/web-socket-js/WebSocketMain.swf';
+		socket = new io.Socket(server_url, {'port': 3000});
+		socket.connect();
+	}catch(exception){
+		alert(exception);
+	}
+	
+	// get the diplay div
+	var display = $("#display");
+	
+	// function to send
+	function sendCommand(c){
+		// do something
+		try{
+			socket.send(c); 
+		}catch(exception){
+			alert(exception);
+		}
+		//socket.on('disconnect', function(){}) 
+	}
+	
+	// Register keypress events on the whole document
+	$(document).keydown(function(e){
+		switch(e.keyCode){
+			// User pressed "left" arrow
+			case 37: display.text("Start Left"); sendCommand("sl");		break;
+			// User pressed "up" arrow
+			case 38: display.text("Start Forward");	sendCommand("sf");	break;
+			// User pressed "right" arrow
+			case 39: display.text("Start Right"); sendCommand("sr");	break;
+			// User pressed "down" arrow
+			case 40: display.text("Start Backward"); sendCommand("sb");	break;
+			// User pressed "space"
+			case 32: display.text("Invoke Brake"); sendCommand("ss");	break;
+			// User pressed "r"
+			case 82: display.text("Restart Engine"); sendCommand("su");	break;
+		}
+	});
+	$(document).keyup(function(e){
+		switch(e.keyCode){
+			// User pressed "left" arrow
+			case 37: display.text("Stop Left");	sendCommand("el");		break;
+			// User pressed "up" arrow
+			case 38: display.text("Stop Forward"); sendCommand("ef");	break;
+			// User pressed "right" arrow
+			case 39: display.text("Stop Right"); sendCommand("er");		break;
+			// User pressed "down" arrow
+			case 40: display.text("Stop Backward"); sendCommand("eb");	break;
+			// User pressed "enter"
+			case 32: display.text("Release Brake");	sendCommand("es");	break;
+			// User pressed "r"
+			case 82: display.text("Stop Restarting Engine"); sendCommand("eu");	break;
+		}
+	});
+});
+</script>
+<style type="text/css">
+html, body {
+	font-family: "Myriad Pro", Arial, sans-serif;
+	padding-top: 150px;
+	margin: 0px;
+	padding-right: 0px;
+	padding-left: 0px;
+}
+#display {
+	font-size: 100px;
+	text-align: center;
+	padding: 20px;
+	color: #FC0;
+	background-color: #000;
+}
+p {
+	color: #333;
+	text-align: center;
+}
+
+</style>
+</head>
+
+<body>
+<p>Current State</p>
+<div id="display">Idle</div>
+<p>Use arrow keys. Press spacebar to stop</p>
+</body>
+</html>

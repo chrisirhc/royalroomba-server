@@ -9,7 +9,8 @@ serv = express.createServer(
   express.staticProvider(__dirname),
   function (req, res) {
     res.writeHead(200, {'Content-Type': 'text/html'});
-    res.write('<h1>Hello world</h1>' + logg); 
+    res.write('<a href="live.html">Live feed</a>\n<a href="control.html">Controls</a>');
+    res.write('<h1>Raw log</h1>' + logg);
     res.end();
   }
 );
@@ -54,7 +55,7 @@ connection.addListener('ready', function () {
   socket.on('connection', function(client){
     // new client is here! 
     client.on('message', function(message){
-      console.log(message);
+      // console.log(message);
       logg += message + "<br/>";
       switch(message) {
         case "sf":
