@@ -5,6 +5,7 @@ express = require('express'),
 amqp = require('amqp'),
 logg = "",
 
+/** Express Server **/
 serv = express.createServer(
   express.staticProvider(__dirname),
   function (req, res) {
@@ -15,46 +16,55 @@ serv = express.createServer(
   }
 );
 
+/** Listen to port 3000 **/
 serv.listen(3000);
 
-var socket = io.listen(serv); 
+/** Setup controls **/
+var controllerSocket = io.listen(serv, {
+  resource: 'socket.io-controller'
+});
 
 /** Assume that AMQP server resides locally **/
 var connection = amqp.createConnection({ host: 'localhost' });
-// Wait for connection to become established.
+
+/**
+ Wait for connection to become established before setting up sockets.
+ **/
 connection.addListener('ready', function () {
   console.log("Ready for amqp messages");
   // Create a queue and bind to all messages.
   // Use the default 'amq.topic' exchange
   var q = connection.queue('a');
-  // Catch all messages
-  q.bind('#');
-  /*
-  q.bind('aoeu');
-  q.bind('aoeu.*');
-  */
+  // Catch all messages in the default exchange for logging
+  q.bind('amq.topic', '#');
 
   // Receive messages
   q.subscribe(function (message) {
     console.log("Received amqp message: " + sys.inspect(message));
     logg += ("Received amqp message: " + sys.inspect(message)) + "<br />";
     // Print messages to stdout
-    socket.broadcast("AMQP: " + message.data.toString());
+    controllerSocket.broadcast("AMQP: " + message.data.toString());
   });
 
   var ex = connection.exchange("amq.topic");
   // ex.publish("aoeu", "hello");
 
-  // socket.io 
-  socket.on('connection', function (client){
+  // socket.io for controllers
+  controllerSocket.on('connection', function (client) {
+    /** Get the roomba number from the resource url **/
+    var roombaNo = client.request.url
+      .replace("/socket.io-controller-", "")
+      .replace(/\/.*$/, "");
+    var routingKey = "roomba" + roombaNo;
+
     // new client is here!
-    client.on('message', function (message){
+    client.on('message', function (message) {
       // console.log(message);
       logg += message + "<br/>";
       switch(message) {
         case "sf":
-        socket.broadcast("Accelerate");
-        ex.publish("roomba1", "ACCELERATE");
+        controllerSocket.broadcast("Accelerate");
+        ex.publish(routingKey, "ACCELERATE");
         break;
         /*
          case "ef":
@@ -62,8 +72,8 @@ connection.addListener('ready', function () {
          break;
          */
         case "sb":
-        socket.broadcast("Deccelerate (Reverse)");
-        ex.publish("roomba1", "DECELERATE");
+        controllerSocket.broadcast("Deccelerate (Reverse)");
+        ex.publish(routingKey, "DECELERATE");
         break;
         /*
          case "eb":
@@ -71,18 +81,18 @@ connection.addListener('ready', function () {
          break;
          */
         case "sl":
-        socket.broadcast("Turn Left");
-        ex.publish("roomba1", "TURN_LEFT");
+        controllerSocket.broadcast("Turn Left");
+        ex.publish(routingKey, "TURN_LEFT");
         break;
         case "sr":
-        socket.broadcast("Turn Right");
-        ex.publish("roomba1", "TURN_RIGHT");
+        controllerSocket.broadcast("Turn Right");
+        ex.publish(routingKey, "TURN_RIGHT");
         break;
         case "su":
-        socket.broadcast("Restart Engine");
-        ex.publish("roomba1", "RESET");
+        controllerSocket.broadcast("Restart Engine");
+        ex.publish(routingKey, "RESET");
         default:
-        socket.broadcast("Unused message: " + message);
+        controllerSocket.broadcast("Unused message: " + message);
         break;
       }
     }) 

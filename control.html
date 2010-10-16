@@ -6,19 +6,26 @@
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
 <script src="/socketio/socket.io.js"></script>
 <script type="text/javascript">
-$(document).ready(function(){
+$(function () {
 	var socket;
   var socketConnected = false;
   var socketRetryWait = 0;
   var connectAttemptTimeout = null;
+
+  /** Set this later on as the roomba number **/
+  var CONTROLLER_NUMBER = 1;
 	
-  WEB_SOCKET_SWF_LOCATION = '/socketio/lib/vendor/web-socket-js/WebSocketMain.swf';
-  socket = new io.Socket(location.hostname);
+  window.WEB_SOCKET_SWF_LOCATION = 'http://localhost:3000/socketio/lib/vendor/web-socket-js/WebSocketMain.swf';
+  socket = new io.Socket(location.hostname, {
+    resource: 'socket.io-controller-' + CONTROLLER_NUMBER
+  });
   socket.connect();
   socket.on('connect', function () {
     socketConnected = true;
-    connectAttemptTimeout && clearTimeout(connectAttemptTimeout);
-    connectAttemptTimeout = null;
+    if (connectAttemptTimeout) {
+      clearTimeout(connectAttemptTimeout);
+      connectAttemptTimeout = null;
+    }
   });
   socket.on('disconnect', function () {
     socketConnected = false;
@@ -30,9 +37,8 @@ $(document).ready(function(){
   function connectAttempt(wait) {
     console.log("Connection attempt");
     if(!socketConnected) {
-      wait = wait || 1000;
+      wait = wait*2 || 1000;
       /** exponential back-off **/
-      wait *= 2;
       connectAttemptTimeout = setTimeout(connectAttempt, wait, wait);
       socket.connect();
     }
@@ -50,6 +56,12 @@ $(document).ready(function(){
 			alert(exception);
 		}
 	}
+  /**
+  s denotes start and e denotes end
+  lfrb - left, front, right, back
+  s - brake
+  u - restart (reset engine)
+  **/
 	
 	// Register keypress events on the whole document
 	$(document).keydown(function(e){

@@ -10,7 +10,9 @@ $(function () {
   var connectAttemptTimeout = null;
 
   WEB_SOCKET_SWF_LOCATION = '/socketio/lib/vendor/web-socket-js/WebSocketMain.swf';
-  socket = new io.Socket(location.hostname);
+  socket = new io.Socket(location.hostname, {
+    resource: 'socket.io-controller'
+  });
   socket.connect();
   socket.on('connect', function () {
     socketConnected = true;
@@ -43,6 +45,6 @@ $(function () {
 </script>
 </head>
 <body>
-<h1>Live commands</h1>
+<h1>Live controller feed</h1>
 </body>
 </html>
