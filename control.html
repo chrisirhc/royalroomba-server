@@ -4,20 +4,39 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>Basic Interface</title>
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
-<script src="http://localhost:3000/socketio/socket.io.js"></script> 
+<script src="/socketio/socket.io.js"></script>
 <script type="text/javascript">
 $(document).ready(function(){
-	var server_url = "localhost";
 	var socket;
+  var socketConnected = false;
+  var socketRetryWait = 0;
+  var connectAttemptTimeout = null;
 	
-	try{
-		io.setPath('/socketio/');
-    WEB_SOCKET_SWF_LOCATION = '/socketio/lib/vendor/web-socket-js/WebSocketMain.swf';
-		socket = new io.Socket(server_url, {'port': 3000});
-		socket.connect();
-	}catch(exception){
-		alert(exception);
-	}
+  WEB_SOCKET_SWF_LOCATION = '/socketio/lib/vendor/web-socket-js/WebSocketMain.swf';
+  socket = new io.Socket(location.hostname);
+  socket.connect();
+  socket.on('connect', function () {
+    socketConnected = true;
+    connectAttemptTimeout && clearTimeout(connectAttemptTimeout);
+    connectAttemptTimeout = null;
+  });
+  socket.on('disconnect', function () {
+    socketConnected = false;
+    /** reconnect **/
+    console.log("disconnected");
+    connectAttempt();
+  });
+
+  function connectAttempt(wait) {
+    console.log("Connection attempt");
+    if(!socketConnected) {
+      wait = wait || 1000;
+      /** exponential back-off **/
+      wait *= 2;
+      connectAttemptTimeout = setTimeout(connectAttempt, wait, wait);
+      socket.connect();
+    }
+  };
 	
 	// get the diplay div
 	var display = $("#display");
@@ -30,7 +49,6 @@ $(document).ready(function(){
 		}catch(exception){
 			alert(exception);
 		}
-		//socket.on('disconnect', function(){}) 
 	}
 	
 	// Register keypress events on the whole document

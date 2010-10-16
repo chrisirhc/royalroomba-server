@@ -19,16 +19,8 @@ serv.listen(3000);
 
 var socket = io.listen(serv); 
 
-// server.listen(3000);
-
-
-/*
-socket.on('clientMessage', function(message) {
-  console.log(message);
-});
-*/
-
-var connection = amqp.createConnection({ host: 'www.vorce.net' });
+/** Assume that AMQP server resides locally **/
+var connection = amqp.createConnection({ host: 'localhost' });
 // Wait for connection to become established.
 connection.addListener('ready', function () {
   console.log("Ready for amqp messages");
@@ -44,17 +36,19 @@ connection.addListener('ready', function () {
 
   // Receive messages
   q.subscribe(function (message) {
+    console.log("Received amqp message: " + sys.inspect(message));
+    logg += ("Received amqp message: " + sys.inspect(message)) + "<br />";
     // Print messages to stdout
-    console.log(message.data.toString());
+    socket.broadcast("AMQP: " + message.data.toString());
   });
 
-  var ex = connection.exchange();
+  var ex = connection.exchange("amq.topic");
   // ex.publish("aoeu", "hello");
 
   // socket.io 
-  socket.on('connection', function(client){
-    // new client is here! 
-    client.on('message', function(message){
+  socket.on('connection', function (client){
+    // new client is here!
+    client.on('message', function (message){
       // console.log(message);
       logg += message + "<br/>";
       switch(message) {
@@ -63,19 +57,19 @@ connection.addListener('ready', function () {
         ex.publish("roomba1", "ACCELERATE");
         break;
         /*
-        case "ef":
-        socket.broadcast("Stop Accelerate");
-        break;
-        */
+         case "ef":
+         socket.broadcast("Stop Accelerate");
+         break;
+         */
         case "sb":
         socket.broadcast("Deccelerate (Reverse)");
         ex.publish("roomba1", "DECELERATE");
         break;
         /*
-        case "eb":
-        socket.broadcast("Deccelerate");
-        break;
-        */
+         case "eb":
+         socket.broadcast("Deccelerate");
+         break;
+         */
         case "sl":
         socket.broadcast("Turn Left");
         ex.publish("roomba1", "TURN_LEFT");
@@ -83,6 +77,12 @@ connection.addListener('ready', function () {
         case "sr":
         socket.broadcast("Turn Right");
         ex.publish("roomba1", "TURN_RIGHT");
+        break;
+        case "su":
+        socket.broadcast("Restart Engine");
+        ex.publish("roomba1", "RESET");
+        default:
+        socket.broadcast("Unused message: " + message);
         break;
       }
     }) 

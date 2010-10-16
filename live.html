@@ -1,18 +1,45 @@
 <html>
 <head>
-<script src="http://localhost:3000/socketio/socket.io.js"></script>
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+<script src="/socketio/socket.io.js"></script>
 <script>
-// io.setPath('/socketio/');
-WEB_SOCKET_SWF_LOCATION = '/socketio/lib/vendor/web-socket-js/WebSocketMain.swf';
-var socket = new io.Socket("localhost", {port: 3000}); 
-socket.on('connect', function(){ 
+$(function () {
+  var socket;
+  var socketConnected = false;
+  var socketRetryWait = 0;
+  var connectAttemptTimeout = null;
+
+  WEB_SOCKET_SWF_LOCATION = '/socketio/lib/vendor/web-socket-js/WebSocketMain.swf';
+  socket = new io.Socket(location.hostname);
+  socket.connect();
+  socket.on('connect', function () {
+    socketConnected = true;
+    connectAttemptTimeout && clearTimeout(connectAttemptTimeout);
+    connectAttemptTimeout = null;
+  });
+  socket.on('disconnect', function () {
+    socketConnected = false;
+    /** reconnect **/
+    console.log("disconnected");
+    connectAttempt();
+  });
+
+  function connectAttempt(wait) {
+    console.log("Connection attempt");
+    if(!socketConnected) {
+      wait = wait || 1000;
+      /** exponential back-off **/
+      wait *= 2;
+      connectAttemptTimeout = setTimeout(connectAttempt, wait, wait);
+      socket.connect();
+    }
+  }
+
+  socket.on('message', function (message) {
+    $("body").append(message + "<br/>");
+  });
+
 });
-socket.on('message', function(message){ 
-  $("body").append(message + "<br/>");
-});
-socket.on('disconnect', function(){});
-socket.connect();
 </script>
 </head>
 <body>
