@@ -1,0 +1,3 @@
+[submodule "lib/nodejs-mjpeg-proxy"]
+	path = lib/nodejs-mjpeg-proxy
+	url = git@github.com:chrisirhc/nodejs-mjpeg-proxy.git
