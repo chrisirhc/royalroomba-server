@@ -1,3 +1,6 @@
 [submodule "lib/nodejs-mjpeg-proxy"]
 	path = lib/nodejs-mjpeg-proxy
 	url = git@github.com:chrisirhc/nodejs-mjpeg-proxy.git
+[submodule "public/lib/socketio"]
+	path = public/lib/socketio
+	url = http://github.com/LearnBoost/Socket.IO.git
