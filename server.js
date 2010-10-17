@@ -4,6 +4,7 @@ io = require('socket.io'),
 express = require('express'),
 amqp = require('amqp'),
 logg = "",
+mpjegproxy = require('./lib/node-mjpeg-proxy'),
 
 /** Express Server **/
 serv = express.createServer(
@@ -18,6 +19,12 @@ serv = express.createServer(
 
 /** Listen to port 3000 **/
 serv.listen(3000);
+
+/** Setup webcam, remember, these fail SILENTLY **/
+/*
+mpjegproxy.createProxy("http://192.168.0.196:8080/videofeed", {port: 5080 + 1});
+mpjegproxy.createProxy("http://192.168.0.120:8080/videofeed", {port: 5080 + 2});
+*/
 
 /** Setup controls **/
 var controllerSocket = io.listen(serv, {
