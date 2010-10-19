@@ -8,7 +8,7 @@ mpjegproxy = require('./lib/node-mjpeg-proxy'),
 
 /** Express Server **/
 serv = express.createServer(
-  express.staticProvider(__dirname),
+  express.staticProvider(__dirname + '/public'),
   function (req, res) {
     res.writeHead(200, {'Content-Type': 'text/html'});
     res.write('<a href="live.html">Live feed</a>\n<a href="control.html">Controls</a>');
@@ -50,7 +50,7 @@ connection.addListener('ready', function () {
     console.log("Received amqp message: " + sys.inspect(message));
     logg += ("Received amqp message: " + sys.inspect(message)) + "<br />";
     // Print messages to stdout
-    controllerSocket.broadcast("AMQP: " + message.data.toString());
+    controllerSocket.broadcast("AMQP: " + message.data.toString() + " - rk: " + message._routingKey);
   });
 
   var ex = connection.exchange("amq.topic");
@@ -95,15 +95,23 @@ connection.addListener('ready', function () {
         controllerSocket.broadcast("Turn Right");
         ex.publish(routingKey, "TURN_RIGHT");
         break;
+        case "ss":
+        controllerSocket.broadcast("E Brake");
+        ex.publish(routingKey, "STOP");
+        break;
         case "su":
         controllerSocket.broadcast("Restart Engine");
         ex.publish(routingKey, "RESET");
+        break;
+        case "sboost":
+        controllerSocket.broadcast("Boost");
+        ex.publish(routingKey, "BOOST");
+        break;
         default:
         controllerSocket.broadcast("Unused message: " + message);
-        break;
       }
-    }) 
+    });
     client.on('disconnect', function(){
-    }) 
+    });
   }); 
 });
