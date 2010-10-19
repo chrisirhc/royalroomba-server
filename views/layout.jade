@@ -1,0 +1,9 @@
+!!!
+html
+  head
+    - var title = title || ""
+    title Royal Roomba #{title}
+    script(src="/lib/jquery.min.js")
+    script(src="/lib/socketio/socket.io.js")
+    link(rel="stylesheet", href="/css/style.css")
+  body!= body

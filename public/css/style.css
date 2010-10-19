@@ -1,0 +1,18 @@
+html, body {
+	font-family: "Myriad Pro", Arial, sans-serif;
+	padding-top: 150px;
+	margin: 0px;
+	padding-right: 0px;
+	padding-left: 0px;
+}
+#display {
+	font-size: 100px;
+	text-align: center;
+	padding: 20px;
+	color: #FC0;
+	background-color: #000;
+}
+p {
+	color: #333;
+	text-align: center;
+}

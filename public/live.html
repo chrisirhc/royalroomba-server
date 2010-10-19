@@ -9,7 +9,7 @@ $(function () {
   var socketRetryWait = 0;
   var connectAttemptTimeout = null;
 
-  WEB_SOCKET_SWF_LOCATION = '/socketio/lib/vendor/web-socket-js/WebSocketMain.swf';
+  WEB_SOCKET_SWF_LOCATION = '/lib/socketio/lib/vendor/web-socket-js/WebSocketMain.swf';
   socket = new io.Socket(location.hostname, {
     resource: 'socket.io-controller'
   });

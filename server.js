@@ -7,15 +7,28 @@ logg = "",
 mpjegproxy = require('./lib/node-mjpeg-proxy'),
 
 /** Express Server **/
-serv = express.createServer(
-  express.staticProvider(__dirname + '/public'),
-  function (req, res) {
-    res.writeHead(200, {'Content-Type': 'text/html'});
-    res.write('<a href="live.html">Live feed</a>\n<a href="control.html">Controls</a>');
-    res.write('<h1>Raw log</h1>' + logg);
-    res.end();
-  }
-);
+serv = express.createServer();
+
+serv.use(express.staticProvider(__dirname + '/public'));
+
+serv.set('view engine', 'jade');
+
+serv.get('/control/:id', function (req, res, next) {
+  res.render("control.jade", {
+    locals: {
+      roombaId: req.params.id
+    }
+  });
+  res.end();
+  return;
+});
+
+serv.use(function (req, res) {
+  res.writeHead(200, {'Content-Type': 'text/html'});
+  res.write('<a href="live.html">Live feed</a>\n<a href="control.html">Controls</a>');
+  res.write('<h1>Raw log</h1>' + logg);
+  res.end();
+});
 
 /** Listen to port 3000 **/
 serv.listen(3000);
@@ -34,6 +47,9 @@ var controllerSocket = io.listen(serv, {
 /** Assume that AMQP server resides locally **/
 var connection = amqp.createConnection({ host: 'localhost' });
 
+/** Timers for reducing the speed **/
+var roombasToSlowDown = [];
+
 /**
  Wait for connection to become established before setting up sockets.
  **/
@@ -51,6 +67,12 @@ connection.addListener('ready', function () {
     logg += ("Received amqp message: " + sys.inspect(message)) + "<br />";
     // Print messages to stdout
     controllerSocket.broadcast("AMQP: " + message.data.toString() + " - rk: " + message._routingKey);
+
+    var messagedata = message.data.toString();
+
+    if (messagedata.indexOf("roomba-startup-") == 0) {
+      /** Initialise each roomba controller **/
+    }
   });
 
   var ex = connection.exchange("amq.topic");
@@ -66,27 +88,39 @@ connection.addListener('ready', function () {
 
     // new client is here!
     client.on('message', function (message) {
-      // console.log(message);
+      var temp;
       logg += message + "<br/>";
       switch(message) {
         case "sf":
         controllerSocket.broadcast("Accelerate");
         ex.publish(routingKey, "ACCELERATE");
+        /** Remove from roombas to slow down **/
+        if ((temp = roombasToSlowDown.indexOf(routingKey)) != -1) {
+          roombasToSlowDown.slice(temp, 1);
+        }
         break;
-        /*
-         case "ef":
-         socket.broadcast("Stop Accelerate");
-         break;
-         */
+        case "ef":
+        /** Add to roombas to slow down **/
+        if ((temp = roombasToSlowDown.indexOf(routingKey)) == -1) {
+          roombasToSlowDown.push(routingKey);
+        }
+        break;
+        /** Back accelerate down **/
         case "sb":
         controllerSocket.broadcast("Deccelerate (Reverse)");
         ex.publish(routingKey, "DECELERATE");
+        /** Remove from roombas to slow down **/
+        if ((temp = roombasToSlowDown.indexOf(routingKey)) != -1) {
+          roombasToSlowDown.slice(temp, 1);
+        }
         break;
-        /*
-         case "eb":
-         socket.broadcast("Deccelerate");
-         break;
-         */
+        /** Back accelerate up **/
+        case "eb":
+        /** Add to roombas to slow down **/
+        if ((temp = roombasToSlowDown.indexOf(routingKey)) == -1) {
+          roombasToSlowDown.push(routingKey);
+        }
+        break;
         case "sl":
         controllerSocket.broadcast("Turn Left");
         ex.publish(routingKey, "TURN_LEFT");
@@ -114,4 +148,11 @@ connection.addListener('ready', function () {
     client.on('disconnect', function(){
     });
   }); 
+
+  /** Slow down the roombas that are moving **/
+  var slowdownInterval = setInterval(function () {
+    roombasToSlowDown.forEach(function (roombark) {
+      ex.publish(roombark, "SLOW_DOWN");
+    });
+  }, 1000);
 });
