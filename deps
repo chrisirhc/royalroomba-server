@@ -1,0 +1,7 @@
+# install nodejs
+# install rabbitmq
+
+npm install jade
+npm install express
+npm install socket.io
+npm install node-amqp
