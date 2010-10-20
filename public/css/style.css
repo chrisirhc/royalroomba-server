@@ -1,16 +1,22 @@
-html, body {
+body {
 	font-family: "Myriad Pro", Arial, sans-serif;
 	padding-top: 150px;
-	margin: 0px;
 	padding-right: 0px;
 	padding-left: 0px;
+	position: relative;
 }
 #display {
 	font-size: 100px;
 	text-align: center;
+	margin: 0px;
 	padding: 20px;
 	color: #FC0;
 	background-color: #000;
+}
+#radar {
+	position: absolute;
+	right: 0;
+	top: 0;
 }
 p {
 	color: #333;

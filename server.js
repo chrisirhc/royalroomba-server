@@ -25,7 +25,7 @@ serv.get('/control/:id', function (req, res, next) {
 
 serv.use(function (req, res) {
   res.writeHead(200, {'Content-Type': 'text/html'});
-  res.write('<a href="live.html">Live feed</a>\n<a href="control.html">Controls</a>');
+  res.write('<a href="live.html">Live feed</a>\n<a href="control/1">Control 1</a>\n<a href="control/2">Control 2</a>');
   res.write('<h1>Raw log</h1>' + logg);
   res.end();
 });
@@ -49,6 +49,7 @@ var connection = amqp.createConnection({ host: 'localhost' });
 
 /** Timers for reducing the speed **/
 var roombasToSlowDown = [];
+var clientMap = {};
 
 /**
  Wait for connection to become established before setting up sockets.
@@ -68,10 +69,18 @@ connection.addListener('ready', function () {
     // Print messages to stdout
     controllerSocket.broadcast("AMQP: " + message.data.toString() + " - rk: " + message._routingKey);
 
+    var messagerk = message._routingKey;
     var messagedata = message.data.toString();
+    var client;
 
-    if (messagedata.indexOf("roomba-startup-") == 0) {
+    if (messagerk.indexOf("roomba-startup-") == 0) {
       /** Initialise each roomba controller **/
+    } else if (messagerk.indexOf("roomba-enemy-") == 0) {
+      client = clientMap[messagerk.replace("roomba-enemy-")];
+      /** Relay **/
+      console.log(messagerk.replace("roomba-enemy-"));
+      console.log(client);
+      if (client) client.send("coord:"messagedata);
     }
   });
 
@@ -85,6 +94,7 @@ connection.addListener('ready', function () {
       .replace("/socket.io-controller-", "")
       .replace(/\/.*$/, "");
     var routingKey = "roomba" + roombaNo;
+    clientMap[roombaNo] = client;
 
     // new client is here!
     client.on('message', function (message) {
@@ -96,7 +106,7 @@ connection.addListener('ready', function () {
         ex.publish(routingKey, "ACCELERATE");
         /** Remove from roombas to slow down **/
         if ((temp = roombasToSlowDown.indexOf(routingKey)) != -1) {
-          roombasToSlowDown.slice(temp, 1);
+          roombasToSlowDown.splice(temp, 1);
         }
         break;
         case "ef":
@@ -111,7 +121,7 @@ connection.addListener('ready', function () {
         ex.publish(routingKey, "DECELERATE");
         /** Remove from roombas to slow down **/
         if ((temp = roombasToSlowDown.indexOf(routingKey)) != -1) {
-          roombasToSlowDown.slice(temp, 1);
+          roombasToSlowDown.splice(temp, 1);
         }
         break;
         /** Back accelerate up **/
@@ -124,10 +134,23 @@ connection.addListener('ready', function () {
         case "sl":
         controllerSocket.broadcast("Turn Left");
         ex.publish(routingKey, "TURN_LEFT");
+        if ((temp = roombasToSlowDown.indexOf(routingKey)) != -1) {
+          roombasToSlowDown.splice(temp, 1);
+        }
         break;
         case "sr":
         controllerSocket.broadcast("Turn Right");
         ex.publish(routingKey, "TURN_RIGHT");
+        if ((temp = roombasToSlowDown.indexOf(routingKey)) != -1) {
+          roombasToSlowDown.splice(temp, 1);
+        }
+        break;
+        case "er":
+        case "el":
+        /** Add to roombas to slow down **/
+        if ((temp = roombasToSlowDown.indexOf(routingKey)) == -1) {
+          roombasToSlowDown.push(routingKey);
+        }
         break;
         case "ss":
         controllerSocket.broadcast("E Brake");

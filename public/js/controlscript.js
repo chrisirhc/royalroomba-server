@@ -19,6 +19,14 @@ $(function () {
       connectAttemptTimeout = null;
     }
   });
+  socket.on('message', function (data) {
+    var coords;
+    /* Coord */
+    if (data.indexOf("coord:") == 0) {
+      coords = data.replace("coord:").split(",");
+      setEnemyPosition(coords[0], coords[1]);
+    }
+  });
   socket.on('disconnect', function () {
     socketConnected = false;
     /** reconnect **/
@@ -88,4 +96,35 @@ $(function () {
 			case 82: display.text("Stop Restarting Engine"); sendCommand("eu");	break;
 		}
 	});
+
+  var paper;
+  var playingField;
+  var circleMe;
+  var circleEnemy;
+
+  initMap(200,200,100,100);
+
+  function initMap(width, height, enemyPositionX, enemyPositionY){
+
+    paper = Raphael("radar", width, height);
+    var radius = Math.min(width,height)/2;
+    playingField = paper.circle(width/2, height/2, radius);
+    playingField.attr({fill: "#000", opacity: 0.5});
+    circleMe = paper.circle(width/2, height/2, 5);
+    circleMe.attr("fill", "#17ee00");
+    setEnemyPosition(enemyPositionX, enemyPositionY);
+  }
+
+  function setEnemyPosition(x,y){
+    if(Math.sqrt(Math.pow(x,2),Math.pow(y,2))<250){
+
+      if(circleEnemy){
+        circleEnemy.remove();
+      }
+
+      circleEnemy = paper.circle(x+250, y+250, 5);
+      circleEnemy.attr("fill", "red");
+    }
+  }
+
 });
