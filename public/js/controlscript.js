@@ -19,12 +19,35 @@ $(function () {
       connectAttemptTimeout = null;
     }
   });
+  var $hpval = $("#hpval");
+  var $speedval = $("#speedval");
+  var $radar = $("#radar");
+
   socket.on('message', function (data) {
     var coords;
     /* Coord */
-    if (data.indexOf("coord:") == 0) {
-      coords = data.replace("coord:", "").split(",");
-      setEnemyPosition(parseInt(coords[0], 10), parseInt(coords[1], 10));
+    var datatype = /^([^:]+):.*$/.exec(data);
+    if (datatype != null) {
+      data = datatype[2];
+      datatype = datatype[1];
+      switch (datatype) {
+      case "coord":
+        coords = data.split(",");
+        setEnemyPosition(parseInt(coords[0], 10)/20, parseInt(coords[1], 10)/20);
+        // rotate the thing
+        $radar.css({
+          'transform': "rotate(" + coords[2] + "deg)",
+          '-webkit-transform': "rotate(" + coords[2] + "deg)",
+          '-moz-transform': "rotate(" + coords[2] + "deg)"
+        });
+      break;
+      case "hp":
+        $hpval.text(data);
+      break;
+      case "speed":
+        $speedval.text(data);
+      break;
+      }
     }
   });
   socket.on('disconnect', function () {
@@ -45,7 +68,7 @@ $(function () {
   };
 	
 	// get the diplay div
-	var display = $("#display");
+	var $display = $("#display");
 	
 	// function to send
 	function sendCommand(c){
@@ -67,33 +90,33 @@ $(function () {
 	$(document).keydown(function(e){
 		switch(e.keyCode){
 			// User pressed "left" arrow
-			case 37: display.text("Start Left"); sendCommand("sl");		break;
+			case 37: $display.text("Start Left"); sendCommand("sl");		break;
 			// User pressed "up" arrow
-			case 38: display.text("Start Forward");	sendCommand("sf");	break;
+			case 38: $display.text("Start Forward");	sendCommand("sf");	break;
 			// User pressed "right" arrow
-			case 39: display.text("Start Right"); sendCommand("sr");	break;
+			case 39: $display.text("Start Right"); sendCommand("sr");	break;
 			// User pressed "down" arrow
-			case 40: display.text("Start Backward"); sendCommand("sb");	break;
+			case 40: $display.text("Start Backward"); sendCommand("sb");	break;
 			// User pressed "space"
-			case 32: display.text("Invoke Brake"); sendCommand("ss");	break;
+			case 32: $display.text("Invoke Brake"); sendCommand("ss");	break;
 			// User pressed "r"
-			case 82: display.text("Restart Engine"); sendCommand("su");	break;
+			case 82: $display.text("Restart Engine"); sendCommand("su");	break;
 		}
 	});
 	$(document).keyup(function(e){
 		switch(e.keyCode){
 			// User pressed "left" arrow
-			case 37: display.text("Stop Left");	sendCommand("el");		break;
+			case 37: $display.text("Stop Left");	sendCommand("el");		break;
 			// User pressed "up" arrow
-			case 38: display.text("Stop Forward"); sendCommand("ef");	break;
+			case 38: $display.text("Stop Forward"); sendCommand("ef");	break;
 			// User pressed "right" arrow
-			case 39: display.text("Stop Right"); sendCommand("er");		break;
+			case 39: $display.text("Stop Right"); sendCommand("er");		break;
 			// User pressed "down" arrow
-			case 40: display.text("Stop Backward"); sendCommand("eb");	break;
+			case 40: $display.text("Stop Backward"); sendCommand("eb");	break;
 			// User pressed "enter"
-			case 32: display.text("Release Brake");	sendCommand("es");	break;
+			case 32: $display.text("Release Brake");	sendCommand("es");	break;
 			// User pressed "r"
-			case 82: display.text("Stop Restarting Engine"); sendCommand("eu");	break;
+			case 82: $display.text("Stop Restarting Engine"); sendCommand("eu");	break;
 		}
 	});
 
@@ -105,7 +128,9 @@ $(function () {
 
   initMap(200,200,0,0);
 
-  function initMap(width, height, enemyPositionX, enemyPositionY) {
+  function initMap(widtharg, heightarg, enemyPositionX, enemyPositionY) {
+    width = widtharg;
+    height = heightarg;
     paper = Raphael("radar", width, height);
     radius = Math.min(width,height)/2;
     playingField = paper.circle(width/2, height/2, radius);
@@ -125,6 +150,11 @@ $(function () {
       circleEnemy.attr("fill", "red");
     }
   }
+
+	var overlay = Raphael("radaroverlay", width, 200);
+	var pie = overlay.g.piechart(width/2,height/2,radius,[15,85],{strokewidth: 0, colors:["none", "grey"]});
+	pie.attr("opacity", "0.5");
+
   $("#videofeed").append(
     $("<img/>")
     .attr("src", "http://" + location.hostname + ":" + (5080 + window.CONTROLLER_NUMBER) + "/")
