@@ -146,7 +146,7 @@ $(function () {
       circleEnemy.remove();
     }
     /** Check whether it's within the circle **/
-    if(Math.sqrt(Math.pow(x,2),Math.pow(y,2))< radius) {
+    if(Math.sqrt(Math.pow(x,2) + Math.pow(y,2)) < radius) {
       circleEnemy = paper.circle(x+radius, y+radius, 5);
       circleEnemy.attr("fill", "red");
     }
