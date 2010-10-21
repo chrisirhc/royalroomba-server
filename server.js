@@ -244,10 +244,18 @@ connection.addListener('ready', function () {
         case "sl":
         controllerSocket.broadcast("Turn Left");
         ex.publish(routingKey, "TURN_LEFT");
+        /** Remove from roombas to slow down **/
+        if ((temp = roombasToSlowDown.indexOf(routingKey)) != -1) {
+          roombasToSlowDown.splice(temp, 1);
+        }
         break;
         case "sr":
         controllerSocket.broadcast("Turn Right");
         ex.publish(routingKey, "TURN_RIGHT");
+        /** Remove from roombas to slow down **/
+        if ((temp = roombasToSlowDown.indexOf(routingKey)) != -1) {
+          roombasToSlowDown.splice(temp, 1);
+        }
         break;
         case "ss":
         controllerSocket.broadcast("E Brake");

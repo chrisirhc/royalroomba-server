@@ -26,6 +26,7 @@ body {
 #stats {
   position: absolute;
   bottom: 50px;
+	text-shadow: 0px 0px 2px #fff;
 }
 
 #videofeed {
@@ -46,10 +47,16 @@ body {
   margin: 0;
   color: #ccc;
 }
-#radaroverlay {
+#radarcontainer {
   position: absolute;
+	height: 200px;
+	width: 200px;
+	overflow: none;
 	right: 0;
 	top: 0;
+}
+#radaroverlay {
+  position: absolute;
   height: 200px;
   width: 200px;
   transform: rotate(180deg);
@@ -58,9 +65,13 @@ body {
 }
 #radar {
 	position: absolute;
-	right: 0;
-	top: 0;
 	width: 200px;
 	height: 200px;
-	overflow: none;
+}
+#hitscreen {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	background: red;
+	opacity: 0;
 }
