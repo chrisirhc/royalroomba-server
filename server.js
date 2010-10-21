@@ -198,12 +198,6 @@ connection.addListener('ready', function () {
         }
         break;
         /** Back accelerate up **/
-        case "eb":
-        /** Add to roombas to slow down **/
-        if ((temp = roombasToSlowDown.indexOf(routingKey)) == -1) {
-          roombasToSlowDown.push(routingKey);
-        }
-        break;
         case "sl":
         controllerSocket.broadcast("Turn Left");
         ex.publish(routingKey, "TURN_LEFT");
@@ -216,13 +210,6 @@ connection.addListener('ready', function () {
         ex.publish(routingKey, "TURN_RIGHT");
         if ((temp = roombasToSlowDown.indexOf(routingKey)) != -1) {
           roombasToSlowDown.splice(temp, 1);
-        }
-        break;
-        case "er":
-        case "el":
-        /** Add to roombas to slow down **/
-        if ((temp = roombasToSlowDown.indexOf(routingKey)) == -1) {
-          roombasToSlowDown.push(routingKey);
         }
         break;
         case "ss":

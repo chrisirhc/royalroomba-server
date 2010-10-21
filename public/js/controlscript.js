@@ -19,6 +19,7 @@ $(function () {
       connectAttemptTimeout = null;
     }
   });
+
   var $hpval = $("#hpval");
   var $speedval = $("#speedval");
   var $radar = $("#radar");
@@ -26,7 +27,7 @@ $(function () {
   socket.on('message', function (data) {
     var coords;
     /* Coord */
-    var datatype = /^([^:]+):.*$/.exec(data);
+    var datatype = /^([^:]+):(.*)$/.exec(data);
     if (datatype != null) {
       data = datatype[2];
       datatype = datatype[1];
