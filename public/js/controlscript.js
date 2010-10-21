@@ -23,8 +23,8 @@ $(function () {
     var coords;
     /* Coord */
     if (data.indexOf("coord:") == 0) {
-      coords = data.replace("coord:").split(",");
-      setEnemyPosition(coords[0], coords[1]);
+      coords = data.replace("coord:", "").split(",");
+      setEnemyPosition(parseInt(coords[0], 10), parseInt(coords[1], 10));
     }
   });
   socket.on('disconnect', function () {
