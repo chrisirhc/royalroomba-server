@@ -1,24 +1,52 @@
+html {
+  height: 100%;
+}
 body {
 	font-family: "Myriad Pro", Arial, sans-serif;
-	padding-top: 150px;
-	padding-right: 0px;
-	padding-left: 0px;
-	position: relative;
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
 }
-#display {
-	font-size: 100px;
+#bottombar {
+  width: 100%;
+	font-size: 20px;
 	text-align: center;
 	margin: 0px;
-	padding: 20px;
 	color: #FC0;
 	background-color: #000;
+  position: absolute;
+  left: 0px;
+  bottom: 0px;
+}
+
+#display {
+}
+
+#stats {
+  position: absolute;
+  bottom: 50px;
+}
+
+#videofeed {
+  background: #999;
+  top: 0px;
+  width: 100%;
+  height: 100%;
+}
+
+#videofeed img {
+  width: 100%;
+  height: 100%;
+}
+#bottombar p {
+  font-size: 12px;
+	text-align: center;
+  margin: 0;
+  color: #ccc;
 }
 #radar {
 	position: absolute;
 	right: 0;
 	top: 0;
-}
-p {
-	color: #333;
-	text-align: center;
 }

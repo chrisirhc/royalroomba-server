@@ -101,13 +101,13 @@ $(function () {
   var playingField;
   var circleMe;
   var circleEnemy;
+  var width, height, radius;
 
-  initMap(200,200,100,100);
+  initMap(200,200,0,0);
 
-  function initMap(width, height, enemyPositionX, enemyPositionY){
-
+  function initMap(width, height, enemyPositionX, enemyPositionY) {
     paper = Raphael("radar", width, height);
-    var radius = Math.min(width,height)/2;
+    radius = Math.min(width,height)/2;
     playingField = paper.circle(width/2, height/2, radius);
     playingField.attr({fill: "#000", opacity: 0.5});
     circleMe = paper.circle(width/2, height/2, 5);
@@ -116,15 +116,18 @@ $(function () {
   }
 
   function setEnemyPosition(x,y){
-    if(Math.sqrt(Math.pow(x,2),Math.pow(y,2))<250){
-
-      if(circleEnemy){
-        circleEnemy.remove();
-      }
-
-      circleEnemy = paper.circle(x+250, y+250, 5);
+    if(circleEnemy){
+      circleEnemy.remove();
+    }
+    /** Check whether it's within the circle **/
+    if(Math.sqrt(Math.pow(x,2),Math.pow(y,2))< radius) {
+      circleEnemy = paper.circle(x+radius, y+radius, 5);
       circleEnemy.attr("fill", "red");
     }
   }
-
+  $("#videofeed").append(
+    $("<img/>")
+    .attr("src", "http://" + location.hostname + ":" + (5080 + window.CONTROLLER_NUMBER) + "/")
+    .attr("alt", "There is no video feed now.")
+  );
 });
