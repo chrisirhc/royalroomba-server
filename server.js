@@ -177,5 +177,5 @@ connection.addListener('ready', function () {
     roombasToSlowDown.forEach(function (roombark) {
       ex.publish(roombark, "SLOW_DOWN");
     });
-  }, 1000);
+  }, 500);
 });
