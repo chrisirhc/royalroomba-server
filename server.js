@@ -76,6 +76,11 @@ for (var i = 0; i < 2; i++) {
   roombaStates[i+1] = new Roomba();
 }
 
+function allClientsSend(clients, message) {
+  clients && clients.forEach(function (c) {
+    c.send(message);
+  });
+}
 /**
  Wait for connection to become established before setting up sockets.
  **/
@@ -119,9 +124,7 @@ connection.addListener('ready', function () {
         roombaStates[roombaId].angle = temp[2];
 
         /** Relay **/
-        if (client) {
-          client.send("coord:" + messagedata);
-        }
+        allClientsSend(client, "coord:" + messagedata);
       break;
       case "collide":
         temp = parseInt(parseInt(messagedata.replace("BUMP_END:", ""), 10) / 1000);
@@ -136,9 +139,9 @@ connection.addListener('ready', function () {
             /** Death! **/
 
           }
-          client && client.send("hp:" + roombaStates[roombaId].hp);
+          allClientsSend(client, "hp:" + roombaStates[roombaId].hp);
         } else {
-          client && client.send("imhit");
+          allClientsSend(client, "imhit");
         }
       break;
       case "speed":
@@ -155,22 +158,20 @@ connection.addListener('ready', function () {
         }
 
         /** Relay **/
-        if (client) {
-          client.send("speed:" + messagedata);
-        }
+        allClientsSend(client, "speed:" + messagedata);
       break;
       case "sensorout":
         switch (messagedata) {
         case "proxhit":
           ex.publish("roomba" + roombaId, "STUNSPIN");
-          client && client.send("imhit");
+          allClientsSend(client, "imhit");
 
           roombaStates[roombaId].hp -= 30;
           if (roombaStates[roombaId].hp <= 0) {
             roombaStates[roombaId].hp = 0;
             /** Death! **/
           }
-          client && client.send("hp:" + roombaStates[roombaId].hp);
+          allClientsSend(client, "hp:" + roombaStates[roombaId].hp);
 
           if(roombaStates[roombaId].stunned) {
             clearTimeout(roombaStates[roombaId].stunned);
@@ -208,7 +209,10 @@ connection.addListener('ready', function () {
       .replace("/socket.io-controller-", "")
       .replace(/\/.*$/, "");
     var routingKey = "roomba" + roombaNo;
-    clientMap[roombaNo] = client;
+    if(!clientMap[roombaNo]) {
+      clientMap[roombaNo] = [];
+    }
+    clientMap[roombaNo].push(client);
 
     /** Send the initialising info when connected **/
     sendAllVars(roombaNo, client);
@@ -224,10 +228,6 @@ connection.addListener('ready', function () {
         case "sf":
         controllerSocket.broadcast("Accelerate");
         ex.publish(routingKey, "ACCELERATE");
-        /** Remove from roombas to slow down **/
-        if ((temp = roombasToSlowDown.indexOf(routingKey)) != -1) {
-          roombasToSlowDown.splice(temp, 1);
-        }
         break;
         case "er":
         case "el":
@@ -239,25 +239,15 @@ connection.addListener('ready', function () {
         case "sb":
         controllerSocket.broadcast("Deccelerate (Reverse)");
         ex.publish(routingKey, "DECELERATE");
-        /** Remove from roombas to slow down **/
-        if ((temp = roombasToSlowDown.indexOf(routingKey)) != -1) {
-          roombasToSlowDown.splice(temp, 1);
-        }
         break;
         /** Back accelerate up **/
         case "sl":
         controllerSocket.broadcast("Turn Left");
         ex.publish(routingKey, "TURN_LEFT");
-        if ((temp = roombasToSlowDown.indexOf(routingKey)) != -1) {
-          roombasToSlowDown.splice(temp, 1);
-        }
         break;
         case "sr":
         controllerSocket.broadcast("Turn Right");
         ex.publish(routingKey, "TURN_RIGHT");
-        if ((temp = roombasToSlowDown.indexOf(routingKey)) != -1) {
-          roombasToSlowDown.splice(temp, 1);
-        }
         break;
         case "ss":
         controllerSocket.broadcast("E Brake");
@@ -282,7 +272,8 @@ connection.addListener('ready', function () {
       res.end();
     });
 
-    client.on('disconnect', function(){
+    client.on('disconnect', function() {
+      clientMap[roombaNo].splice(clientMap[roombaNo].indexOf(client), 1);
     });
 
   }); 
