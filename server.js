@@ -67,6 +67,8 @@ var Roomba = function Roomba() {
 
   /** Angle at which the roomba is oriented to **/
   this.angle = 0;
+
+  this.stunned = null;
 };
 
 /** Assume that the roomba has been started **/
@@ -108,6 +110,7 @@ connection.addListener('ready', function () {
       /** Empty for now **/
       /** Initialise each roomba controller **/
       case "startup":
+      break;
       case "enemy":
         temp = messagedata.split(",");
         /** Store the new coords **/
@@ -120,12 +123,35 @@ connection.addListener('ready', function () {
           client.send("coord:" + messagedata);
         }
       break;
+      case "collide":
+        temp = parseInt(parseInt(messagedata.replace("BUMP_END:", ""), 10) / 1000);
+        if(messagedata.indexOf("BUMP_END") == 0) {
+          if (temp <= 2) {
+            roombaStates[roombaId].hp -= 20;
+          } else {
+            roombaStates[roombaId].hp -= 20 + (temp - 2)*5;
+          }
+          if (roombaStates[roombaId].hp <= 0) {
+            roombaStates[roombaId].hp = 0;
+            /** Death! **/
+
+          }
+          client && client.send("hp:" + roombaStates[roombaId].hp);
+        } else {
+          client && client.send("imhit");
+        }
+      break;
       case "speed":
         roombaStates[roombaId].speed[0] = messagedata;
 
         /** Remove it as it has gone to 0 **/
-        if(messagedata == 0 && (temp = roombasToSlowDown.indexOf("roomba" + roombaId)) != -1) {
+        if(messagedata == 0) {
+          if ((temp = roombasToSlowDown.indexOf("roomba" + roombaId)) != -1) {
             roombasToSlowDown.splice(temp, 1);
+          }
+          /** If not 0, slow down **/
+        } else if ((temp = roombasToSlowDown.indexOf("roomba" + roombaId)) == -1) {
+          roombasToSlowDown.push("roomba" + roombaId);
         }
 
         /** Relay **/
@@ -138,6 +164,20 @@ connection.addListener('ready', function () {
         case "proxhit":
           ex.publish("roomba" + roombaId, "STUNSPIN");
           client && client.send("imhit");
+
+          roombaStates[roombaId].hp -= 30;
+          if (roombaStates[roombaId].hp <= 0) {
+            roombaStates[roombaId].hp = 0;
+            /** Death! **/
+          }
+          client && client.send("hp:" + roombaStates[roombaId].hp);
+
+          if(roombaStates[roombaId].stunned) {
+            clearTimeout(roombaStates[roombaId].stunned);
+          }
+          roombaStates[roombaId].stunned = setTimeout(function (rid) {
+            roombaStates[rid].stunned = null;
+          }, 1500, roombaId);
         break;
         case "justhit"
           client && client.send("imhit");
@@ -148,6 +188,15 @@ connection.addListener('ready', function () {
       }
     }
   });
+
+  function sendAllVars(roombaNo, client) {
+    if (roombaStates[roombaNo] && client) {
+      client.send("hp:" + roombaStates[roombaNo].hp);
+      client.send("speed:" + roombaStates[roombaNo].speed);
+      client.send("coord:" + roombaStates[roombaNo].enemylocation.join(",") +
+      "," + roombaStates[roombaNo].angle);
+    }
+  }
 
   var ex = connection.exchange("amq.topic");
   // ex.publish("aoeu", "hello");
@@ -162,17 +211,15 @@ connection.addListener('ready', function () {
     clientMap[roombaNo] = client;
 
     /** Send the initialising info when connected **/
-    if (roombaStates[roombaNo]) {
-      client.send("hp:" + roombaStates[roombaNo].hp);
-      client.send("speed:" + roombaStates[roombaNo].speed);
-      client.send("coord:" + roombaStates[roombaNo].enemylocation.join(",") +
-      "," + roombaStates[roombaNo].angle);
-    }
+    sendAllVars(roombaNo, client);
 
     // new client is here!
     client.on('message', function (message) {
       var temp;
       logg += message + "<br/>";
+      if(roombaStates[roombaNo].stunned) {
+        return;
+      }
       switch(message) {
         case "sf":
         controllerSocket.broadcast("Accelerate");
@@ -182,11 +229,11 @@ connection.addListener('ready', function () {
           roombasToSlowDown.splice(temp, 1);
         }
         break;
+        case "er":
+        case "el":
+        case "eb":
         case "ef":
-        /** Add to roombas to slow down **/
-        if ((temp = roombasToSlowDown.indexOf(routingKey)) == -1) {
-          roombasToSlowDown.push(routingKey);
-        }
+        /** Add to roombas to slow down no more.. **/
         break;
         /** Back accelerate down **/
         case "sb":
@@ -228,8 +275,16 @@ connection.addListener('ready', function () {
         controllerSocket.broadcast("Unused message: " + message);
       }
     });
+
+    serv.get('/reset', function (req, res, next) {
+      ex.publish("server", "RESETVAR");
+      res.send(200);
+      res.end();
+    });
+
     client.on('disconnect', function(){
     });
+
   }); 
 
   /** Slow down the roombas that are moving **/
