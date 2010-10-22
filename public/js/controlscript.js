@@ -23,6 +23,7 @@ $(function () {
   var $hpval = $("#hpval");
   var $speedval = $("#speedval");
   var $radar = $("#radar");
+  var $hitscreen = $("#hitscreen");
 
   socket.on('message', function (data) {
     var coords;
@@ -47,6 +48,14 @@ $(function () {
       break;
       case "speed":
         $speedval.text(data);
+      break;
+      case "imhit":
+      $hitscreen.animate({opacity: 0.7}, undefined, undefined, function () {
+        $hitscreen.animate({opacity: 0});
+      });
+      break;
+      case "death":
+      $hitscreen.animate({opacity: 0.7});
       break;
       }
     }

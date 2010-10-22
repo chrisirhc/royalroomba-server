@@ -92,6 +92,8 @@ connection.addListener('ready', function () {
   // Catch all messages in the default exchange for logging
   q.bind('amq.topic', '#');
 
+  var ex = connection.exchange("amq.topic");
+
   // Receive messages
   q.subscribe(function (message) {
     // console.log("Received amqp message: " + sys.inspect(message));
@@ -137,11 +139,15 @@ connection.addListener('ready', function () {
           if (roombaStates[roombaId].hp <= 0) {
             roombaStates[roombaId].hp = 0;
             /** Death! **/
-
+            allClientsSend(client, "death:");
+            ex.publish("roomba" + roombaId, "STOP");
+            roombaStates[roombaId].stunned = setTimeout(function (rid) {
+              roombaStates[rid].stunned = null;
+            }, 10000, roombaId);
           }
           allClientsSend(client, "hp:" + roombaStates[roombaId].hp);
         } else {
-          allClientsSend(client, "imhit");
+          allClientsSend(client, "imhit:");
         }
       break;
       case "speed":
@@ -164,12 +170,17 @@ connection.addListener('ready', function () {
         switch (messagedata) {
         case "proxhit":
           ex.publish("roomba" + roombaId, "STUNSPIN");
-          allClientsSend(client, "imhit");
+          allClientsSend(client, "imhit:");
 
           roombaStates[roombaId].hp -= 30;
           if (roombaStates[roombaId].hp <= 0) {
             roombaStates[roombaId].hp = 0;
             /** Death! **/
+            allClientsSend(client, "death:");
+            ex.publish("roomba" + roombaId, "STOP");
+            roombaStates[roombaId].stunned = setTimeout(function (rid) {
+              roombaStates[rid].stunned = null;
+            }, 10000, roombaId);
           }
           allClientsSend(client, "hp:" + roombaStates[roombaId].hp);
 
@@ -198,9 +209,6 @@ connection.addListener('ready', function () {
       "," + roombaStates[roombaNo].angle);
     }
   }
-
-  var ex = connection.exchange("amq.topic");
-  // ex.publish("aoeu", "hello");
 
   // socket.io for controllers
   controllerSocket.on('connection', function (client) {
@@ -275,6 +283,9 @@ connection.addListener('ready', function () {
     });
 
     serv.get('/reset', function (req, res, next) {
+      for (var i in roombaStates) {
+        roombaStates[i] = new Roomba();
+      }
       ex.publish("server", "RESETVAR");
       res.send(200);
       res.end();
