@@ -11,10 +11,11 @@ serv = express.createServer();
 serv.use(express.staticProvider(__dirname + '/public'));
 serv.set('view engine', 'jade');
 serv.get('/control/:id', function (req, res, next) {
-  res.render("control.jade", {
+  res.render("control.ejs", {
     locals: {
       roombaId: req.params.id
-    }
+    },
+    layout: false
   });
   res.end();
   return;
