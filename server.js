@@ -43,7 +43,7 @@ serv.listen(3000);
 /** Setup webcam, remember, these fail SILENTLY **/
 try {
   for (var i = WEBCAMIPS.length; i--;) {
-    mpjegproxy.createProxy("http://" + WEBCAMIPS[i] + ":8080/videofeed", {port: 5080 + i + 1});
+    mpjegproxy.createProxy("http://" + WEBCAMIPS[i] + ":8080/videofeed", {server: serv, resource: "cam/" + (i+1)});
   }
 } catch(e) {
   console.log("Problem initialising feed");

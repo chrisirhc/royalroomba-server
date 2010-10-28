@@ -167,7 +167,7 @@ $(function () {
 
   $("#videofeed").append(
     $("<img/>")
-    .attr("src", "http://" + location.hostname + ":" + (5080 + window.CONTROLLER_NUMBER) + "/")
+    .attr("src", "/cam/" + window.CONTROLLER_NUMBER)
     .attr("alt", "There is no video feed now.")
   );
 });
