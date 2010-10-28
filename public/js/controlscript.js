@@ -63,12 +63,12 @@ $(function () {
   socket.on('disconnect', function () {
     socketConnected = false;
     /** reconnect **/
-    console.log("disconnected");
+    // console.log("disconnected");
     connectAttempt();
   });
 
   function connectAttempt(wait) {
-    console.log("Connection attempt");
+    // console.log("Connection attempt");
     if(!socketConnected) {
       wait = wait*2 || 1000;
       /** exponential back-off **/

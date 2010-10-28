@@ -191,8 +191,7 @@ connection.addListener('ready', function () {
             roombaStates[rid].stunned = null;
           }, 1500, roombaId);
         break;
-        case "justhit"
-          client && client.send("imhit");
+        case "justhit":
         break;
         }
       break;
