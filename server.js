@@ -21,8 +21,13 @@ serv.get('/control/:id', function (req, res, next) {
 });
 
 /** Constants **/
-var WEBCAMIPS =
-[];
+var RABBITMQHOST = "localhost";
+var WEBCAMIPS = [];
+var i = 0;
+for (i = 2; i < process.argv.length; i++) {
+  WEBCAMIPS.push(process.argv[i]);
+}
+
 // ["192.168.2.1", ""];
 
 serv.use(function (req, res) {
@@ -50,7 +55,7 @@ var controllerSocket = io.listen(serv, {
 });
 
 /** Assume that AMQP server resides locally **/
-var connection = amqp.createConnection({ host: 'localhost' });
+var connection = amqp.createConnection({ host: RABBITMQHOST });
 
 /** Timers for reducing the speed **/
 var roombasToSlowDown = [];
