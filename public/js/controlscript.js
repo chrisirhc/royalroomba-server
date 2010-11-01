@@ -1,5 +1,5 @@
 $(function () {
-	var socket;
+  var socket;
   var socketConnected = false;
   var socketRetryWait = 0;
   var connectAttemptTimeout = null;
@@ -20,10 +20,15 @@ $(function () {
     }
   });
 
+  // IDs
   var $hpval = $("#hpval");
   var $speedval = $("#speedval");
   var $radar = $("#radar");
   var $hitscreen = $("#hitscreen");
+  var $hpbox = $("#hpbox");
+  var $speedbox = $("#speedbox");
+  var $hplabel = $("#hplabel");
+  var $speedlabel = $("#speedlabel");
 
   socket.on('message', function (data) {
     var coords;
@@ -33,7 +38,8 @@ $(function () {
       data = datatype[2];
       datatype = datatype[1];
       switch (datatype) {
-      case "coord":
+      // Minimap Coordinates
+	  case "coord":
         coords = data.split(",");
         setEnemyPosition(parseInt(coords[0], 10)/20, parseInt(coords[1], 10)/20);
         // rotate the thing
@@ -43,17 +49,26 @@ $(function () {
           '-moz-transform': "rotate(" + coords[2] + "deg)"
         });
       break;
+	  // Health updates
       case "hp":
-        $hpval.text(data);
+		var $hpwidth = parseFloat(data)/100.0 * $hpbox.width();
+		$hplabel.text($hpwidth);
+		$hpval.animate({ width: parseInt($hpwidth) }, 100);
       break;
+	  // Speed updates
       case "speed":
-        $speedval.text(data);
+		var $speedwidth = parseFloat(data)/500.0 * $speedbox.width();
+		$speedlabel.text($speedwidth);
+		$speedval.animate({ width: parseInt($speedwidth) }, 100);
+
       break;
+	  // Hit Animation
       case "imhit":
       $hitscreen.animate({opacity: 0.7}, undefined, undefined, function () {
         $hitscreen.animate({opacity: 0});
       });
       break;
+	  // Death Animation
       case "death":
       $hitscreen.animate({opacity: 0.7});
       break;

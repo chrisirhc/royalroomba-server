@@ -24,10 +24,62 @@ body {
 }
 
 #stats {
-  position: absolute;
-  bottom: 50px;
-	text-shadow: 0px 0px 2px #fff;
+	position: absolute;
+	bottom: 40px;
+	background-color: #666;
+	width: 100%;
 }
+
+#hpbox {
+	height: 20px;
+	position: relative;
+}
+
+#speedbox {
+	height: 20px;
+	border-top-width: 1px;
+	border-top-style: dotted;
+	border-top-color: #000;
+	position: relative;
+}
+#hplabel {
+	width: 100px;
+	margin-right: auto;
+	margin-left: auto;
+	text-align: center;
+	color: #FFF;
+	font-size: 14px;
+	vertical-align: middle;
+	z-index: 1000;
+}
+
+#speedlabel {
+	color: #FFF;
+	font-size: 14px;
+	vertical-align: middle;
+	width: 100px;
+	margin-right: auto;
+	margin-left: auto;
+	text-align: center;
+	z-index: 1000;
+}
+#hpval {
+	background-color: #0F0;
+	width: 100px;
+	position: absolute;
+	left: 0px;
+	top: 0px;
+	height: 20px;
+}
+#speedval {
+	background-color: #F90;
+	height: 20px;
+	width: 100px;
+	position: absolute;
+	left: 0px;
+	top: 1px;
+}
+
 
 #videofeed {
   background: #999;
@@ -70,7 +122,7 @@ body {
 }
 #hitscreen {
 	position: absolute;
-  top: 0;
+	top: 0;
 	width: 100%;
 	height: 100%;
 	background: red;
