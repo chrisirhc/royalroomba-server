@@ -287,15 +287,6 @@ connection.addListener('ready', function () {
       }
     });
 
-    serv.get('/reset', function (req, res, next) {
-      for (var i in roombaStates) {
-        roombaStates[i] = new Roomba();
-      }
-      ex.publish("server", "RESETVAR");
-      res.send(200);
-      res.end();
-    });
-
     client.on('disconnect', function() {
       clientMap[roombaNo].splice(clientMap[roombaNo].indexOf(client), 1);
     });
@@ -308,4 +299,28 @@ connection.addListener('ready', function () {
       ex.publish(roombark, "SLOW_DOWN");
     });
   }, 500);
+
+  serv.get('/start', function (req, res, next) {
+    // reset then start
+    for (var i in roombaStates) {
+      roombaStates[i] = new Roomba();
+    }
+    ex.publish("server", "RESETVAR");
+
+    /** send start to all clients **/
+    for (var i in clientMap) {
+      allClientsSend(clientMap[i], "start:");
+    }
+    res.send(200);
+    res.end();
+  });
+
+  serv.get('/reset', function (req, res, next) {
+    for (var i in roombaStates) {
+      roombaStates[i] = new Roomba();
+    }
+    ex.publish("server", "RESETVAR");
+    res.send(200);
+    res.end();
+  });
 });
