@@ -8,6 +8,13 @@ body {
   height: 100%;
   width: 100%;
 }
+
+.roomba {
+  position: relative;
+  float: left;
+  width: 50%;
+}
+
 .bottombar {
   width: 100%;
 	font-size: 20px;
