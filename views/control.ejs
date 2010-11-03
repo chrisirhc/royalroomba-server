@@ -6,20 +6,20 @@
 <link rel="stylesheet" href="/css/style.css"/>
 </head>
 <body>
-<div id="videofeed"></div>
-<div id="stats">
-  <div id="hpbox"><div id="hpval"></div><div id="hplabel">Health</div></div>
-  <div id="speedbox"><div id="speedval"></div><div id="speedlabel">Speed</div></div>
+<div class="videofeed"></div>
+<div class="stats">
+  <div class="hpbox"><div class="hpval"></div><div class="hplabel">Health</div></div>
+  <div class="speedbox"><div class="speedval"></div><div class="speedlabel">Speed</div></div>
 </div>
-<div id="bottombar">
-  <div id="display">Idle</div>
+<div class="bottombar">
+  <div class="display">Idle</div>
   <p>Use arrow keys. Press spacebar to stop</p>
 </div>
-<div id="radarcontainer">
-  <div id="radar"></div>
-  <div id="radaroverlay"></div>
+<div class="radarcontainer">
+  <div class="radar"></div>
+  <div class="radaroverlay"></div>
 </div>
-<div id="hitscreen"></div>
+<div class="hitscreen"></div>
 <script>window.CONTROLLER_NUMBER = <%= roombaId %>;</script>
 <script src="/lib/raphael-min.js"></script><script src="/lib/g.raphael-min.js"></script><script src="/lib/g.pie-min.js"></script><script src="/js/controlscript.js"></script>
 </body>

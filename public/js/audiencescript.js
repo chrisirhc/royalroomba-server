@@ -4,15 +4,23 @@ $(function () {
   var socketRetryWait = 0;
   var connectAttemptTimeout = null;
 
-  /** Set this later on as the roomba number **/
-  var CONTROLLER_NUMBER = window.CONTROLLER_NUMBER || 1;
-	
   window.WEB_SOCKET_SWF_LOCATION = '/lib/socketio/lib/vendor/web-socket-js/WebSocketMain.swf';
-  socket = new io.Socket(location.hostname, {
-    resource: 'socket.io-controller-' + CONTROLLER_NUMBER
+  audsocket1 = new io.Socket(location.hostname, {
+    resource: 'socket.io-controller-' + 1
   });
-  socket.connect();
-  socket.on('connect', function () {
+  audsocket2 = new io.Socket(location.hostname, {
+    resource: 'socket.io-controller-' + 2
+  });
+  audsocket1.connect();
+  audsocket2.connect();
+  audsocket1.on('connect', function () {
+    socketConnected = true;
+    if (connectAttemptTimeout) {
+      clearTimeout(connectAttemptTimeout);
+      connectAttemptTimeout = null;
+    }
+  });
+  audsocket2.on('connect', function () {
     socketConnected = true;
     if (connectAttemptTimeout) {
       clearTimeout(connectAttemptTimeout);
@@ -21,16 +29,18 @@ $(function () {
   });
 
   // IDs
-  var $hpval = $(".hpval");
-  var $speedval = $(".speedval");
-  var $radar = $(".radar");
-  var $hitscreen = $(".hitscreen");
-  var $hpbox = $(".hpbox");
-  var $speedbox = $(".speedbox");
-  var $hplabel = $(".hplabel");
-  var $speedlabel = $(".speedlabel");
+  var $hpval = $("#hpval");
+  var $speedval = $("#speedval");
+  var $radar = $("#radar");
+  var $hitscreen = $("#hitscreen");
+  var $hpbox = $("#hpbox");
+  var $speedbox = $("#speedbox");
+  var $hplabel = $("#hplabel");
+  var $speedlabel = $("#speedlabel");
 
-  socket.on('message', function (data) {
+  socket.on('message', onMessage);
+
+  function onMessage(data) {
     var coords;
     /* Coord */
     var datatype = /^([^:]+):(.*)$/.exec(data);
@@ -74,7 +84,7 @@ $(function () {
       break;
       }
     }
-  });
+  }
   socket.on('disconnect', function () {
     socketConnected = false;
     /** reconnect **/
@@ -93,7 +103,7 @@ $(function () {
   };
 	
 	// get the diplay div
-	var $display = $(".display");
+	var $display = $("#display");
 	
 	// function to send
 	function sendCommand(c){
@@ -156,7 +166,7 @@ $(function () {
   function initMap(widtharg, heightarg, enemyPositionX, enemyPositionY) {
     width = widtharg;
     height = heightarg;
-    paper = Raphael($(".radar").get(0), width, height);
+    paper = Raphael("radar", width, height);
     radius = Math.min(width,height)/2;
     playingField = paper.circle(width/2, height/2, radius);
     playingField.attr({fill: "#000", opacity: 0.5});
@@ -176,11 +186,11 @@ $(function () {
     }
   }
 
-	var overlay = Raphael($(".radaroverlay").get(0), width, 200);
+	var overlay = Raphael("radaroverlay", width, 200);
 	var pie = overlay.g.piechart(width/2,height/2,radius,[15,85],{strokewidth: 0, colors:["none", "grey"]});
 	pie.attr("opacity", "0.5");
 
-  $(".videofeed").append(
+  $("#videofeed").append(
     $("<img/>")
     .attr("src", "/cam/" + window.CONTROLLER_NUMBER)
     .attr("alt", "There is no video feed now.")
