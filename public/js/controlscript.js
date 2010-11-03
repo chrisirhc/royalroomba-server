@@ -62,6 +62,8 @@ $(function () {
 		$speedval.animate({ width: parseInt($speedwidth) }, 100);
 
       break;
+    // Stunned animation
+      case "stun":
 	  // Hit Animation
       case "imhit":
       $hitscreen.animate({opacity: 0.7}, undefined, undefined, function () {
