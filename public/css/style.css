@@ -18,6 +18,7 @@ body {
   width: 172px;
   background: url(../images/timer-bg.png) center center;
   margin: auto;
+  font-size: 30px;
   position: relative;
 }
 

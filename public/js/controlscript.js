@@ -29,6 +29,7 @@ $(function () {
   var $speedbox = $(".speedbox");
   var $hplabel = $(".hplabel");
   var $speedlabel = $(".speedlabel");
+  var $timer = $("#timer span");
 
   socket.on('message', function (data) {
     var coords;
@@ -49,6 +50,10 @@ $(function () {
           '-moz-transform': "rotate(" + coords[2] + "deg)"
         });
       break;
+      // Timer updates
+      case "timer":
+        $timer.text(data);
+        break;
 	  // Health updates
       case "hp":
 		var $hpwidth = parseFloat(data)/100.0 * $hpbox.width();

@@ -24,6 +24,8 @@ serv.get('/control/:id', function (req, res, next) {
 /** Constants **/
 var RABBITMQHOST = "localhost";
 var WEBCAMIPS = [];
+var GAME_LENGTH = 180; // in seconds
+
 var i = 0;
 for (i = 2; i < process.argv.length; i++) {
   WEBCAMIPS.push(process.argv[i]);
@@ -298,6 +300,8 @@ connection.addListener('ready', function () {
     });
   }, 500);
 
+  var timerInterval, gameTime;
+
   serv.get('/start', function (req, res, next) {
     // reset then start
     for (var i in roombaStates) {
@@ -315,6 +319,21 @@ connection.addListener('ready', function () {
     for (var i in clientMap) {
       allClientsSend(clientMap[i], "start:");
     }
+
+    /** Handle the timer interval **/
+    if (timerInterval) {
+      clearInterval(timerInterval);
+      /** no need to null since setting it next **/
+    }
+    gameTime = GAME_LENGTH;
+    timerInterval = setInterval(function () {
+      controllerSocket.broadcast("timer:" + gameTime--);
+      if (gameTime < 0) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+      }
+    }, 1000);
+
     res.send(200);
     res.end();
   });
@@ -329,6 +348,14 @@ connection.addListener('ready', function () {
         }
       }
     }
+    /** Handle the timer interval **/
+    if (timerInterval) {
+      clearInterval(timerInterval);
+      timerInterval = null;
+    }
+    /** Show - as the number of seconds **/
+    controllerSocket.broadcast("timer:-");
+
     ex.publish("server", "RESETVAR");
     res.send(200);
     res.end();

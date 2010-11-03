@@ -34,6 +34,7 @@ $(function () {
     var $speedbox = $(".speedbox", $roomba);
     var $hplabel = $(".hplabel", $roomba);
     var $speedlabel = $(".speedlabel", $roomba);
+    var $timer = $("#timer span");
 
     socket.on('message', onMessage);
 
@@ -56,6 +57,12 @@ $(function () {
             '-moz-transform': "rotate(" + coords[2] + "deg)"
           });
           break;
+          case "timer":
+            if (n == 1) {
+              $timer.text(data);
+            }
+          break;
+
           // Health updates
           case "hp":
             var $hpwidth = parseFloat(data)/100.0 * $hpbox.width();
