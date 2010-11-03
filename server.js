@@ -147,9 +147,11 @@ connection.addListener('ready', function () {
             /** Death! **/
             allClientsSend(client, "death:");
             ex.publish("roomba" + roombaId, "STOP");
-            roombaStates[roombaId].stunned = setTimeout(function (rid) {
-              roombaStates[rid].stunned = null;
-            }, 10000, roombaId);
+            /** Make sure it doesn't revive **/
+            if(roombaStates[roombaId].stunned) {
+              clearTimeout(roombaStates[roombaId].stunned);
+            }
+            roombaStates[roombaId].stunned = true;
           }
           allClientsSend(client, "hp:" + roombaStates[roombaId].hp);
         } else {
@@ -184,18 +186,21 @@ connection.addListener('ready', function () {
             /** Death! **/
             allClientsSend(client, "death:");
             ex.publish("roomba" + roombaId, "STOP");
+            /** Make sure it doesn't revive **/
+            if(roombaStates[roombaId].stunned) {
+              clearTimeout(roombaStates[roombaId].stunned);
+            }
+            /** Stop any activities once and for all **/
+            roombaStates[roombaId].stunned = true;
+          } else {
+            if(roombaStates[roombaId].stunned) {
+              clearTimeout(roombaStates[roombaId].stunned);
+            }
             roombaStates[roombaId].stunned = setTimeout(function (rid) {
               roombaStates[rid].stunned = null;
-            }, 10000, roombaId);
+            }, 1500, roombaId);
           }
           allClientsSend(client, "hp:" + roombaStates[roombaId].hp);
-
-          if(roombaStates[roombaId].stunned) {
-            clearTimeout(roombaStates[roombaId].stunned);
-          }
-          roombaStates[roombaId].stunned = setTimeout(function (rid) {
-            roombaStates[rid].stunned = null;
-          }, 1500, roombaId);
         break;
         case "justhit":
         break;
