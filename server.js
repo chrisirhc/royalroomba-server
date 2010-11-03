@@ -103,10 +103,8 @@ connection.addListener('ready', function () {
   // Receive messages
   q.subscribe(function (message) {
     // console.log("Received amqp message: " + sys.inspect(message));
-    console.log("AMQP: " + message.data.toString() + " - rk: " + message._routingKey);
     logg += ("Received amqp message: " + sys.inspect(message)) + "<br />";
     // Print messages to stdout
-    controllerSocket.broadcast("AMQP: " + message.data.toString() + " - rk: " + message._routingKey);
 
     var messagerk = message._routingKey;
     var messagedata = message.data.toString();
@@ -157,7 +155,7 @@ connection.addListener('ready', function () {
         }
       break;
       case "speed":
-        roombaStates[roombaId].speed[0] = messagedata;
+        roombaStates[roombaId].speed = messagedata;
 
         /** Remove it as it has gone to 0 **/
         if(messagedata == 0) {
@@ -176,7 +174,7 @@ connection.addListener('ready', function () {
         switch (messagedata) {
         case "proxhit":
           ex.publish("roomba" + roombaId, "STUNSPIN");
-          allClientsSend(client, "imhit:");
+          allClientsSend(client, "stun:");
 
           roombaStates[roombaId].hp -= 30;
           if (roombaStates[roombaId].hp <= 0) {
@@ -239,7 +237,7 @@ connection.addListener('ready', function () {
       }
       switch(message) {
         case "sf":
-        controllerSocket.broadcast("Accelerate");
+        // controllerSocket.broadcast("Accelerate");
         ex.publish(routingKey, "ACCELERATE");
         break;
         case "er":
@@ -250,12 +248,12 @@ connection.addListener('ready', function () {
         break;
         /** Back accelerate down **/
         case "sb":
-        controllerSocket.broadcast("Deccelerate (Reverse)");
+        // controllerSocket.broadcast("Deccelerate (Reverse)");
         ex.publish(routingKey, "DECELERATE");
         break;
         /** Back accelerate up **/
         case "sl":
-        controllerSocket.broadcast("Turn Left");
+        // controllerSocket.broadcast("Turn Left");
         ex.publish(routingKey, "TURN_LEFT");
         /** Remove from roombas to slow down **/
         if ((temp = roombasToSlowDown.indexOf(routingKey)) != -1) {
@@ -263,7 +261,7 @@ connection.addListener('ready', function () {
         }
         break;
         case "sr":
-        controllerSocket.broadcast("Turn Right");
+        // controllerSocket.broadcast("Turn Right");
         ex.publish(routingKey, "TURN_RIGHT");
         /** Remove from roombas to slow down **/
         if ((temp = roombasToSlowDown.indexOf(routingKey)) != -1) {
@@ -271,15 +269,15 @@ connection.addListener('ready', function () {
         }
         break;
         case "ss":
-        controllerSocket.broadcast("E Brake");
+        // controllerSocket.broadcast("E Brake");
         ex.publish(routingKey, "STOP");
         break;
         case "su":
-        controllerSocket.broadcast("Restart Engine");
+        // controllerSocket.broadcast("Restart Engine");
         ex.publish(routingKey, "RESET");
         break;
         case "sboost":
-        controllerSocket.broadcast("Boost");
+        // controllerSocket.broadcast("Boost");
         ex.publish(routingKey, "BOOST");
         break;
         default:
@@ -304,6 +302,12 @@ connection.addListener('ready', function () {
     // reset then start
     for (var i in roombaStates) {
       roombaStates[i] = new Roomba();
+      /** Send new information to the roombas **/
+      if (clientMap[i]) {
+        for(var j = clientMap[i].length; j--; ) {
+          sendAllVars(i, clientMap[i][j]);
+        }
+      }
     }
     ex.publish("server", "RESETVAR");
 
@@ -318,6 +322,12 @@ connection.addListener('ready', function () {
   serv.get('/reset', function (req, res, next) {
     for (var i in roombaStates) {
       roombaStates[i] = new Roomba();
+      /** Send new information to the roombas **/
+      if (clientMap[i]) {
+        for(var j = clientMap[i].length; j--; ) {
+          sendAllVars(i, clientMap[i][j]);
+        }
+      }
     }
     ex.publish("server", "RESETVAR");
     res.send(200);
