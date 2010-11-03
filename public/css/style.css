@@ -8,11 +8,35 @@ body {
   height: 100%;
   width: 100%;
 }
+#topbar {
+  position: absolute;
+  width: 100%;
+}
+
+#timer {
+  height: 124px;
+  width: 172px;
+  background: url(../images/timer-bg.png) center center;
+  margin: auto;
+  position: relative;
+}
+
+#timer span {
+  display: block;
+  position: absolute;
+  top: 50px;
+  text-align: center;
+  padding: auto;
+  margin: auto;
+  height: 10px;
+  width: 100%;
+}
 
 .roomba {
   position: relative;
   float: left;
   width: 50%;
+  height: 100%;
 }
 
 .bottombar {
@@ -112,8 +136,14 @@ body {
 	width: 200px;
 	overflow: none;
 	right: 0;
-	top: 0;
+	bottom: 100px;
 }
+
+#roomba1 .radarcontainer {
+  right: auto;
+  left: 0;
+}
+
 .radaroverlay {
   position: absolute;
   height: 200px;
