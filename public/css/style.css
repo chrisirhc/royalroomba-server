@@ -167,4 +167,6 @@ body {
 	height: 100%;
 	background: red;
 	opacity: 0;
+	font-size: 320px;
+	text-align: center;
 }
