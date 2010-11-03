@@ -166,9 +166,10 @@ $(function () {
     paper = Raphael($(".radar").get(0), width, height);
     radius = Math.min(width,height)/2;
     playingField = paper.circle(width/2, height/2, radius);
-    playingField.attr({fill: "#000", opacity: 0.5});
+    playingField.attr({fill: "#666", opacity: 1.0});
+    playingField.attr("stroke-width", 0);
     circleMe = paper.circle(width/2, height/2, 5);
-    circleMe.attr("fill", "#17ee00");
+    circleMe.attr({fill: "#17ee00", 'stroke-width': 0});
     setEnemyPosition(enemyPositionX, enemyPositionY);
   }
 
@@ -179,13 +180,13 @@ $(function () {
     /** Check whether it's within the circle **/
     if(Math.sqrt(Math.pow(x,2) + Math.pow(y,2)) < radius) {
       circleEnemy = paper.circle(x+radius, y+radius, 5);
-      circleEnemy.attr("fill", "red");
+      circleEnemy.attr({fill: "red", 'stroke-width': 0});
     }
   }
 
 	var overlay = Raphael($(".radaroverlay").get(0), width, 200);
-	var pie = overlay.g.piechart(width/2,height/2,radius,[15,85],{strokewidth: 0, colors:["none", "grey"]});
-	pie.attr("opacity", "0.5");
+	var pie = overlay.g.piechart(width/2,height/2,radius,[15,85],{strokewidth: 0, colors:["none", "white"]});
+	pie.attr("opacity", "0.3");
 
   $(".videofeed").append(
     $("<img/>")
