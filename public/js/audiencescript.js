@@ -136,7 +136,7 @@ $(function () {
 
     $(".videofeed", $roomba).append(
       $("<img/>")
-      .attr("src", "/cam/" + window.CONTROLLER_NUMBER)
+      .attr("src", "/cam/" + n)
       .attr("alt", "There is no video feed now.")
     );
   }
