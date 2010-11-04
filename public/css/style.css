@@ -99,10 +99,11 @@ body {
 	position: relative;
 }
 .speedlabel {
+	position: absolute;
 	color: #FFF;
 	font-size: 14px;
 	vertical-align: middle;
-	width: 100px;
+	width: 100%;
 	margin-right: auto;
 	margin-left: auto;
 	text-align: center;
@@ -228,13 +229,18 @@ body {
 	font-size: 320px;
 	text-align: center;
 }
-.wallscreen {
+.hitscreen {
 	background-position: center center;
 	background-repeat: no-repeat;
-	background-image: url(../images/kenahit.png);	
+	background-image: url(../images/kenahit.png);
+}
+.wallscreen {
 }
 .stunscreen {
-	background: blue;
+	background-color: blue;
+	background-position: center center;
+	background-repeat: no-repeat;
+	background-image: url(../images/stunned.png);
 }
 #roomba1 {
 	background: #000;

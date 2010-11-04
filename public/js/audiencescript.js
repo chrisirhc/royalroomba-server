@@ -78,8 +78,8 @@ $(function () {
           break;
           // Speed updates
           case "speed":
-            var $speedwidth = parseFloat(data)/500.0 * $speedbox.width();
-          $speedlabel.text($speedwidth);
+            var $speedwidth = parseFloat(Math.abs(data))/500.0 * $speedbox.width();
+          $speedlabel.text(data);
           $speedval.animate({ width: parseInt($speedwidth) }, 100);
 
           break;
