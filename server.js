@@ -336,9 +336,7 @@ connection.addListener('ready', function () {
     ex.publish("server", "RESETVAR");
 
     /** send start to all clients **/
-    for (var i in clientMap) {
-      allClientsSend(clientMap[i], "start:");
-    }
+    controllerSocket.broadcast("start:");
 
     /** Handle the timer interval **/
     if (timerInterval) {
@@ -346,13 +344,17 @@ connection.addListener('ready', function () {
       /** no need to null since setting it next **/
     }
     gameTime = GAME_LENGTH;
-    timerInterval = setInterval(function () {
-      controllerSocket.broadcast("timer:" + gameTime--);
-      if (gameTime < 0) {
-        clearInterval(timerInterval);
-        timerInterval = null;
-      }
-    }, 1000);
+
+    /** Three seconds time start **/
+    setTimeout(function() {
+      timerInterval = setInterval(function () {
+        controllerSocket.broadcast("timer:" + gameTime--);
+        if (gameTime < 0) {
+          clearInterval(timerInterval);
+          timerInterval = null;
+        }
+      }, 1000);
+    }, 3000);
 
     res.send(200);
     res.end();
