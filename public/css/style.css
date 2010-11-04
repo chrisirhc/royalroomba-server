@@ -218,7 +218,7 @@ body {
 	width: 200px;
 	height: 200px;
 }
-.hitscreen, .stunscreen {
+.hitscreen, .stunscreen, .wallscreen {
 	position: absolute;
 	top: 0;
 	width: 100%;
