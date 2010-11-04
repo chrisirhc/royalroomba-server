@@ -9,8 +9,10 @@
 <div id="roomba1" class="roomba">
   <div class="videofeed"></div>
   <div class="stats">
-    <div class="hpbox"><div class="hpval"></div><div class="hplabel">Health</div></div>
-    <div class="speedbox"><div class="speedval"></div><div class="speedlabel">Speed</div></div>
+    <div class="speedbox">
+      <div class="speedval"></div>
+      <div class="speedlabel">Speed</div>
+    </div>
   </div>
   <div class="bottombar">
     <div class="display">Player 1</div>
@@ -26,8 +28,10 @@
 <div id="roomba2" class="roomba">
   <div class="videofeed"></div>
   <div class="stats">
-    <div class="hpbox"><div class="hpval"></div><div class="hplabel">Health</div></div>
-    <div class="speedbox"><div class="speedval"></div><div class="speedlabel">Speed</div></div>
+    <div class="speedbox">
+      <div class="speedval"></div>
+      <div class="speedlabel">Speed</div>
+    </div>
   </div>
   <div class="bottombar">
     <div class="display">Player 2</div>
@@ -41,8 +45,20 @@
   <div class="hitscreen"></div>
 </div>
 <div id="topbar">
+  <div id="roomba1-hp-container">
+    <div id="roomba1-hp" class="hpbox">
+      <div class="hpval"></div>
+    </div>
+    <div class="hplabel">00</div>
+  </div>
+  <div id="roomba2-hp-container">
+    <div id="roomba2-hp" class="hpbox">
+      <div class="hpval"></div>
+    </div>
+    <div class="hplabel">00</div>
+  </div>
   <div id="timer"><span>RR</span></div>
-<div>
+</div>
 <script src="/lib/raphael-min.js"></script><script src="/lib/g.raphael-min.js"></script><script src="/lib/g.pie-min.js"></script><script src="/js/audiencescript.js"></script>
 </body>
 </html>

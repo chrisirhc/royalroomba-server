@@ -1,88 +1,68 @@
 html {
-  height: 100%;
+	height: 100%;
 }
 body {
 	font-family: "Myriad Pro", Arial, sans-serif;
-  margin: 0;
-  padding: 0;
-  height: 100%;
-  width: 100%;
+	margin: 0;
+	padding: 0;
+	height: 100%;
+	width: 100%;
 }
 #topbar {
-  position: absolute;
-  width: 100%;
+	position: relative;
+	width: 100%;
 }
-
 #timer {
-  height: 124px;
-  width: 172px;
-  background: url(../images/timer-bg.png) center center;
-  margin: auto;
-  font-size: 30px;
-  position: relative;
+	height: 124px;
+	width: 172px;
+	background: url(../images/timer-bg.png) center center;
+	position: absolute;
+	top: 15px;
+	margin-left: -86px;
+	display: block;
+	left: 50%;
 }
-
 #timer span {
-  display: block;
-  position: absolute;
-  top: 50px;
-  text-align: center;
-  padding: auto;
-  margin: auto;
-  height: 10px;
-  width: 100%;
+	display: block;
+	position: absolute;
+	top: 50px;
+	text-align: center;
+	padding: auto;
+	margin: auto;
+	height: 10px;
+	width: 100%;
 }
-
 .roomba {
-  position: relative;
-  float: left;
-  width: 50%;
-  height: 100%;
+	position: relative;
+	float: left;
+	width: 50%;
+	height: 100%;
 }
-
 .bottombar {
-  width: 100%;
+	width: 100%;
 	font-size: 20px;
 	text-align: center;
 	margin: 0px;
 	color: #FC0;
 	background-color: #000;
-  position: absolute;
-  left: 0px;
-  bottom: 0px;
+	position: absolute;
+	left: 0px;
+	bottom: 0px;
 }
-
 .display {
 }
-
 .stats {
 	position: absolute;
 	bottom: 40px;
 	background-color: #666;
 	width: 100%;
 }
-
-.hpbox {
-	height: 20px;
-	position: relative;
-}
-
 .speedbox {
 	height: 20px;
 	border-top-width: 1px;
 	border-top-style: dotted;
 	border-top-color: #000;
 	position: relative;
-}
-.hplabel {
-	width: 100px;
-	margin-right: auto;
-	margin-left: auto;
-	text-align: center;
-	color: #FFF;
-	font-size: 14px;
-	vertical-align: middle;
-	z-index: 1000;
 }
 
 .speedlabel {
@@ -95,14 +75,6 @@ body {
 	text-align: center;
 	z-index: 1000;
 }
-.hpval {
-	background-color: #0F0;
-	width: 100px;
-	position: absolute;
-	left: 0px;
-	top: 0px;
-	height: 20px;
-}
 .speedval {
 	background-color: #F90;
 	height: 20px;
@@ -111,30 +83,26 @@ body {
 	left: 0px;
 	top: 1px;
 }
-
-
 .videofeed {
-  top: 0px;
-  width: 100%;
-  height: 100%;
-  transform: rotate(180deg);
-  -moz-transform: rotate(180deg);
-  -webkit-transform: rotate(180deg);
+	top: 0px;
+	width: 100%;
+	height: 100%;
+	transform: rotate(180deg);
+	-moz-transform: rotate(180deg);
+	-webkit-transform: rotate(180deg);
 }
-
 .videofeed img {
-  width: 100%;
-  height: 100%;
+	width: 100%;
+	height: 100%;
 }
-
 .bottombar p {
-  font-size: 12px;
+	font-size: 12px;
 	text-align: center;
-  margin: 0;
-  color: #ccc;
+	margin: 0;
+	color: #ccc;
 }
 .radarcontainer {
-  position: absolute;
+	position: absolute;
 	height: 200px;
 	width: 200px;
 	overflow: none;
@@ -142,18 +110,76 @@ body {
 	bottom: 100px;
 }
 
-#roomba1 .radarcontainer {
-  right: auto;
-  left: 0;
+.hpval {
+	background-color: #F00;
+	width: 100px;
+	height: 40px;
+	-moz-border-radius: 10px;
+	-webkit-border-radius: 10px;
 }
-
+.hpbox {
+	height: 40px;
+	position: relative;
+	width: 300px;
+}
+.hplabel {
+	width: 120px;
+	margin-top: 5px;
+	margin-right: auto;
+	margin-left: auto;
+	font-size: 25px;
+	font-weight: bold;
+	vertical-align: middle;
+	z-index: 1000;
+}
+#roomba1 .radarcontainer {
+	right: auto;
+	left: 0;
+}
+#roomba1-hp-container {
+	width: 50%;
+	position: absolute;
+	top: 60px;
+	display: block;
+	right: 50%;
+}
+#roomba1-hp-container #roomba1-hp {
+	float: right;
+	margin-right: 75px;
+	border: 3px solid #000;
+	-moz-border-radius: 10px;
+	-webkit-border-radius: 10px;
+	text-align: right;
+}
+#roomba2-hp-container {
+	width: 50%;
+	display: block;
+	left: 50%;
+	top: 60px;
+	position: absolute;
+}
+#roomba2-hp-container #roomba2-hp {
+	margin-left: 75px;
+	border: 3px solid #000;
+	-moz-border-radius: 10px;
+	-webkit-border-radius: 10px;
+}
+#roomba1-hp-container #roomba1-hp .hpval {
+	float: right;
+}
+#roomba2-hp-container .hplabel {
+	text-align: right;
+}
+#roomba1-hp-container .hplabel {
+	text-align: left;
+}
 .radaroverlay {
-  position: absolute;
-  height: 200px;
-  width: 200px;
-  transform: rotate(180deg);
-  -moz-transform: rotate(180deg);
-  -webkit-transform: rotate(180deg);
+	position: absolute;
+	height: 200px;
+	width: 200px;
+	transform: rotate(180deg);
+	-moz-transform: rotate(180deg);
+	-webkit-transform: rotate(180deg);
 }
 .radar {
 	position: absolute;
