@@ -162,7 +162,7 @@ connection.addListener('ready', function () {
             roombaStates[roombaId].beingHit = false;
             allClientsSend(client, "imhitend:");
           }
-          allClientsSend(client, "hp:" + roombaStates[roombaId].hp);
+          controllerSocket.broadcast("hp:" + roombaId + "-" + roombaStates[roombaId].hp);
         } else {
           if (!roombaStates[roombaId].beingHit) {
             allClientsSend(client, "imhit:");
@@ -212,7 +212,7 @@ connection.addListener('ready', function () {
               roombaStates[rid].stunned = null;
             }, 1500, roombaId);
           }
-          allClientsSend(client, "hp:" + roombaStates[roombaId].hp);
+          controllerSocket.broadcast("hp:" + roombaId + "-" + roombaStates[roombaId].hp);
         break;
         case "justhit":
         break;
@@ -225,7 +225,9 @@ connection.addListener('ready', function () {
 
   function sendAllVars(roombaNo, client) {
     if (roombaStates[roombaNo] && client) {
-      client.send("hp:" + roombaStates[roombaNo].hp);
+      for (var i in roombaStates) {
+        client.send("hp:" + i + "-" + roombaStates[i].hp);
+      }
       client.send("speed:" + roombaStates[roombaNo].speed);
       client.send("coord:" + roombaStates[roombaNo].enemylocation.join(",") +
       "," + roombaStates[roombaNo].angle);

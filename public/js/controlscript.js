@@ -21,14 +21,22 @@ $(function () {
   });
 
   // IDs
-  var $hpval = $(".hpval");
+  var arr$hpval = {};
+  var arr$hpbox = {};
+  var arr$hplabel = {};
+  var ROOMBAS = [1, 2];
+  var x, a;
+  for (a = ROOMBAS.length; a--; ) {
+    x = ROOMBAS[a];
+    arr$hplabel[x] = $("#roomba" + x + "-hp-container .hplabel");
+    arr$hpbox[x] = $("#roomba" + x + "-hp-container .hpbox");
+    arr$hpval[x] = $("#roomba" + x + "-hp-container .hpval");
+  }
   var $speedval = $(".speedval");
   var $radar = $(".radar");
   var $hitscreen = $(".hitscreen");
   var $stunscreen = $(".stunscreen");
-  var $hpbox = $(".hpbox");
   var $speedbox = $(".speedbox");
-  var $hplabel = $(".hplabel");
   var $speedlabel = $(".speedlabel");
   var $timer = $("#timer span");
 
@@ -83,9 +91,12 @@ $(function () {
         break;
 	  // Health updates
       case "hp":
-		var $hpwidth = parseFloat(data)/100.0 * $hpbox.width();
-		$hplabel.text($hpwidth);
-		$hpval.animate({ width: parseInt($hpwidth) }, 100);
+         data = data.split("-");
+      var roombaNo = data[0];
+      data = data[1];
+      var $hpwidth = parseFloat(data)/100.0 * arr$hpbox[roombaNo].width();
+      arr$hplabel[roombaNo].text(data);
+      arr$hpval[roombaNo].animate({ width: parseInt($hpwidth) }, 100);
       break;
 	  // Speed updates
       case "speed":

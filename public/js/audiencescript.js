@@ -26,14 +26,14 @@ $(function () {
     });
 
     // IDs
-    var $hpval = $(".hpval", $roomba);
+    var $hpval = $("#roomba" + n + "-hp-container .hpval");
     var $speedval = $(".speedval", $roomba);
     var $radar = $(".radar", $roomba);
     var $hitscreen = $(".hitscreen", $roomba);
     var $stunscreen = $(".stunscreen", $roomba);
-    var $hpbox = $(".hpbox", $roomba);
+    var $hpbox = $("#roomba" + n + "-hp-container .hpbox");
     var $speedbox = $(".speedbox", $roomba);
-    var $hplabel = $(".hplabel", $roomba);
+    var $hplabel = $("#roomba" + n + "-hp-container .hplabel");
     var $speedlabel = $(".speedlabel", $roomba);
     var $timer = $("#timer span");
 
@@ -68,9 +68,13 @@ $(function () {
 
           // Health updates
           case "hp":
+            data = data.split("-");
+          if (data[0] == n) {
+            data = data[1];
             var $hpwidth = parseFloat(data)/100.0 * $hpbox.width();
-          $hplabel.text($hpwidth);
-          $hpval.animate({ width: parseInt($hpwidth) }, 100);
+            $hplabel.text(data);
+            $hpval.animate({ width: parseInt($hpwidth) }, 100);
+          }
           break;
           // Speed updates
           case "speed":
