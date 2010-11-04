@@ -34,6 +34,27 @@ $(function () {
 
   var stunnedtimer = null;
 
+  var countdownsounds = [
+    new Audio("/audio/3.ogg"),
+    new Audio("/audio/2.ogg"),
+    new Audio("/audio/1.ogg"),
+    new Audio("/audio/go.ogg")
+  ];
+
+  function countdown() {
+    console.log("countdown");
+    countdownsounds[0].play();
+    setTimeout(function () {
+      countdownsounds[1].play();
+    }, 1000);
+    setTimeout(function () {
+      countdownsounds[2].play();
+    }, 2000);
+    setTimeout(function () {
+      countdownsounds[3].play();
+    }, 3000);
+  }
+
   socket.on('message', function (data) {
     var coords;
     /* Coord */
@@ -53,6 +74,9 @@ $(function () {
           '-moz-transform': "rotate(" + coords[2] + "deg)"
         });
       break;
+      case "start":
+        countdown();
+        break;
       // Timer updates
       case "timer":
         $timer.text(data);
