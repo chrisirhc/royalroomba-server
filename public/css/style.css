@@ -228,6 +228,11 @@ body {
 	font-size: 320px;
 	text-align: center;
 }
+.wallscreen {
+	background-position: center center;
+	background-repeat: no-repeat;
+	background-image: url(../images/kenahit.png);	
+}
 .stunscreen {
 	background: blue;
 }
