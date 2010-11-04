@@ -119,7 +119,7 @@ connection.addListener('ready', function () {
       msgType = msgType[1];
       client = clientMap[roombaId];
 
-      console.log("AMQP: " + message.data.toString() + " - rk: " + message._routingKey);
+      // console.log("AMQP: " + message.data.toString() + " - rk: " + message._routingKey);
       controllerSocket.broadcast("AMQP: " + message.data.toString() + " - rk: " + message._routingKey);
 
       switch (msgType) {
