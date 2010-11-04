@@ -42,14 +42,15 @@ $(function () {
 
   var stunnedtimer = null;
 
-  var countdownsounds = [
-    new Audio("/audio/3.ogg"),
-    new Audio("/audio/2.ogg"),
-    new Audio("/audio/1.ogg"),
-    new Audio("/audio/go.ogg")
-  ];
+  var countdownsounds;
 
   function countdown() {
+    countdownsounds = [
+      new Audio("/audio/3.ogg"),
+      new Audio("/audio/2.ogg"),
+      new Audio("/audio/1.ogg"),
+      new Audio("/audio/go.ogg")
+    ];
     console.log("countdown");
     countdownsounds[0].play();
     setTimeout(function () {
