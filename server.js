@@ -229,6 +229,9 @@ connection.addListener('ready', function () {
       client.send("speed:" + roombaStates[roombaNo].speed);
       client.send("coord:" + roombaStates[roombaNo].enemylocation.join(",") +
       "," + roombaStates[roombaNo].angle);
+      if (roombaStates[roombaNo].hp == 0) {
+        client.send("death:");
+      }
     }
   }
 
