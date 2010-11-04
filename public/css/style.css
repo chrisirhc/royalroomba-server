@@ -160,7 +160,8 @@ body {
 	width: 200px;
 	height: 200px;
 }
-.hitscreen {
+
+.hitscreen, .stunscreen {
 	position: absolute;
 	top: 0;
 	width: 100%;
@@ -169,6 +170,10 @@ body {
 	opacity: 0;
 	font-size: 320px;
 	text-align: center;
+}
+
+.stunscreen {
+  background: blue;
 }
 
 #roomba1 {

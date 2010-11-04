@@ -119,6 +119,9 @@ connection.addListener('ready', function () {
       msgType = msgType[1];
       client = clientMap[roombaId];
 
+      console.log("AMQP: " + message.data.toString() + " - rk: " + message._routingKey);
+      controllerSocket.broadcast("AMQP: " + message.data.toString() + " - rk: " + message._routingKey);
+
       switch (msgType) {
       /** Empty for now **/
       /** Initialise each roomba controller **/
@@ -137,11 +140,14 @@ connection.addListener('ready', function () {
       case "collide":
         temp = parseInt(parseInt(messagedata.replace("BUMP_END:", ""), 10) / 1000);
         if(messagedata.indexOf("BUMP_END") == 0) {
+          /** Deduct hp **/
           if (temp <= 2) {
             roombaStates[roombaId].hp -= 20;
           } else {
             roombaStates[roombaId].hp -= 20 + (temp - 2)*5;
           }
+
+          /** Determine whether dead **/
           if (roombaStates[roombaId].hp <= 0) {
             roombaStates[roombaId].hp = 0;
             /** Death! **/
@@ -152,10 +158,16 @@ connection.addListener('ready', function () {
               clearTimeout(roombaStates[roombaId].stunned);
             }
             roombaStates[roombaId].stunned = true;
+          } else {
+            roombaStates[roombaId].beingHit = false;
+            allClientsSend(client, "imhitend:");
           }
           allClientsSend(client, "hp:" + roombaStates[roombaId].hp);
         } else {
-          allClientsSend(client, "imhit:");
+          if (!roombaStates[roombaId].beingHit) {
+            allClientsSend(client, "imhit:");
+            roombaStates[roombaId].beingHit = true;
+          }
         }
       break;
       case "speed":
@@ -351,6 +363,7 @@ connection.addListener('ready', function () {
         for(var j = clientMap[i].length; j--; ) {
           sendAllVars(i, clientMap[i][j]);
         }
+        allClientsSend(clientMap[i], "imhitend:");
       }
     }
     /** Handle the timer interval **/

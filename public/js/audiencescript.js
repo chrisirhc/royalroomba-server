@@ -30,11 +30,14 @@ $(function () {
     var $speedval = $(".speedval", $roomba);
     var $radar = $(".radar", $roomba);
     var $hitscreen = $(".hitscreen", $roomba);
+    var $stunscreen = $(".stunscreen", $roomba);
     var $hpbox = $(".hpbox", $roomba);
     var $speedbox = $(".speedbox", $roomba);
     var $hplabel = $(".hplabel", $roomba);
     var $speedlabel = $(".speedlabel", $roomba);
     var $timer = $("#timer span");
+
+    var stunnedtimer = null;
 
     socket.on('message', onMessage);
 
@@ -78,11 +81,21 @@ $(function () {
           break;
           // Stunned animation
           case "stun":
+            $stunscreen.animate({opacity: 0.7}, 300);
+            if (stunnedtimer) {
+              clearTimeout(stunnedtimer);
+            }
+            stunnedtimer = setTimeout(function () {
+              $stunscreen.animate({opacity: 0}, 400);
+            }, 800);
+          break;
           // Hit Animation
           case "imhit":
-            $hitscreen.animate({opacity: 0.7}, undefined, undefined, function () {
-            $hitscreen.animate({opacity: 0});
-          });
+            $hitscreen.animate({opacity: 0.7});
+          break;
+          // End of hit
+          case "imhitend":
+            $hitscreen.stop(true).animate({opacity: 0});
           break;
           // Death Animation
           case "death":

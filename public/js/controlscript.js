@@ -25,11 +25,14 @@ $(function () {
   var $speedval = $(".speedval");
   var $radar = $(".radar");
   var $hitscreen = $(".hitscreen");
+  var $stunscreen = $(".stunscreen");
   var $hpbox = $(".hpbox");
   var $speedbox = $(".speedbox");
   var $hplabel = $(".hplabel");
   var $speedlabel = $(".speedlabel");
   var $timer = $("#timer span");
+
+  var stunnedtimer = null;
 
   socket.on('message', function (data) {
     var coords;
@@ -65,19 +68,28 @@ $(function () {
 		var $speedwidth = parseFloat(data)/500.0 * $speedbox.width();
 		$speedlabel.text($speedwidth);
 		$speedval.animate({ width: parseInt($speedwidth) }, 100);
-
       break;
     // Stunned animation
       case "stun":
+        $stunscreen.animate({opacity: 0.7}, 300);
+      if (stunnedtimer) {
+        clearTimeout(stunnedtimer);
+      }
+      stunnedtimer = setTimeout(function () {
+        $stunscreen.animate({opacity: 0}, 400);
+      }, 800);
+      break;
 	  // Hit Animation
       case "imhit":
-      $hitscreen.animate({opacity: 0.7}, undefined, undefined, function () {
-        $hitscreen.animate({opacity: 0});
-      });
+        $hitscreen.animate({opacity: 0.7});
+      break;
+    // End of hit
+      case "imhitend":
+        $hitscreen.stop(true).animate({opacity: 0});
       break;
 	  // Death Animation
       case "death":
-      $hitscreen.animate({opacity: 0.7});
+      $hitscreen.animate({opacity: 0.9});
       break;
       }
     }
