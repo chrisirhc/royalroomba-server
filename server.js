@@ -325,6 +325,8 @@ connection.addListener('ready', function () {
   var timerInterval, gameTime;
 
   serv.get('/start', function (req, res, next) {
+    // Revive all dead screens
+    controllerSocket.broadcast("imhitend:");
     // reset then start
     for (var i in roombaStates) {
       roombaStates[i] = new Roomba();
@@ -363,6 +365,9 @@ connection.addListener('ready', function () {
   });
 
   serv.get('/reset', function (req, res, next) {
+    // Revive all dead screens
+    controllerSocket.broadcast("imhitend:");
+
     for (var i in roombaStates) {
       roombaStates[i] = new Roomba();
       /** Send new information to the roombas **/
@@ -370,7 +375,6 @@ connection.addListener('ready', function () {
         for(var j = clientMap[i].length; j--; ) {
           sendAllVars(i, clientMap[i][j]);
         }
-        allClientsSend(clientMap[i], "imhitend:");
       }
     }
     /** Handle the timer interval **/
