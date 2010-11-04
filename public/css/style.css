@@ -8,6 +8,26 @@ body {
 	height: 100%;
 	width: 100%;
 }
+#player1-image {
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	width: 195px;
+	height: 160px;
+	background: url(../images/player-1.png);
+	display: block;
+	z-index: 51;
+}	
+#player2-image {
+	position: absolute;
+	top: 0px;
+	right: 0px;
+	width: 192px;
+	height: 160px;
+	background: url(../images/player-2.png);
+	display: block;
+	z-index: 51;
+}	
 #topbar {
 	position: relative;
 	width: 100%;

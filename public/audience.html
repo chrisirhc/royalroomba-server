@@ -1,1 +1,64 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html><head><title>Royal Roomba</title><script src="/lib/jquery.min.js"></script><script src="/lib/socketio/socket.io.js"></script><link rel="stylesheet" href="/css/style.css"/></head><body><div id="roomba1" class="roomba">  <div class="videofeed"></div>  <div class="stats">    <div class="speedbox">      <div class="speedval"></div>      <div class="speedlabel">Speed</div>    </div>  </div>  <div class="bottombar">    <div class="display">Player 1</div>    <p>-</p>  </div>  <div class="radarcontainer">    <div class="radar"></div>    <div class="radaroverlay"></div>  </div>  <div class="hitscreen"></div></div><div id="roomba2" class="roomba">  <div class="videofeed"></div>  <div class="stats">    <div class="speedbox">      <div class="speedval"></div>      <div class="speedlabel">Speed</div>    </div>  </div>  <div class="bottombar">    <div class="display">Player 2</div>    <p>-</p>  </div>  <div class="radarcontainer">    <div class="radar"></div>    <div class="radaroverlay"></div>  </div>  <div class="hitscreen"></div></div><div id="topbar">  <div id="roomba1-hp-container">    <div id="roomba1-hp" class="hpbox">      <div class="hpval"></div>    </div>    <div class="hplabel">00</div>  </div>  <div id="roomba2-hp-container">    <div id="roomba2-hp" class="hpbox">      <div class="hpval"></div>    </div>    <div class="hplabel">00</div>  </div>  <div id="timer"><span>Timer here</span></div></div><script src="/lib/raphael-min.js"></script><script src="/lib/g.raphael-min.js"></script><script src="/lib/g.pie-min.js"></script><script src="/js/audiencescript.js"></script></body></html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+<title>Royal Roomba</title>
+<script src="/lib/jquery.min.js"></script><script src="/lib/socketio/socket.io.js"></script>
+<link rel="stylesheet" href="css/style.css"/>
+</head>
+<body>
+<div id="player1-image"></div>
+<div id="player2-image"></div>
+<div id="roomba1" class="roomba">
+  <div class="videofeed"></div>
+  <div class="stats">
+    <div class="speedbox">
+      <div class="speedval"></div>
+      <div class="speedlabel">Speed</div>
+    </div>
+  </div>
+  <div class="bottombar">
+    <div class="display">Player 1</div>
+    <p>-</p>
+  </div>
+  <div class="radarcontainer">
+    <div class="radar"></div>
+    <div class="radaroverlay"></div>
+  </div>
+  <div class="hitscreen"></div>
+</div>
+<div id="roomba2" class="roomba">
+  <div class="videofeed"></div>
+  <div class="stats">
+    <div class="speedbox">
+      <div class="speedval"></div>
+      <div class="speedlabel">Speed</div>
+    </div>
+  </div>
+  <div class="bottombar">
+    <div class="display">Player 2</div>
+    <p>-</p>
+  </div>
+  <div class="radarcontainer">
+    <div class="radar"></div>
+    <div class="radaroverlay"></div>
+  </div>
+  <!--<div class="hitscreen"></div>-->
+</div>
+<div id="topbar">
+  <div id="roomba1-hp-container">
+    <div id="roomba1-hp" class="hpbox">
+      <div class="hpval"></div>
+    </div>
+    <div class="hplabel">00</div>
+  </div>
+  <div id="roomba2-hp-container">
+    <div id="roomba2-hp" class="hpbox">
+      <div class="hpval"></div>
+    </div>
+    <div class="hplabel">00</div>
+  </div>
+  <div id="timer"><span>Timer here</span></div>
+</div>
+<script src="/lib/raphael-min.js"></script><script src="/lib/g.raphael-min.js"></script><script src="/lib/g.pie-min.js"></script><script src="/js/audiencescript.js"></script>
+</body>
+</html>
