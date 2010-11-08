@@ -36,6 +36,7 @@ $(function () {
   var $radar = $(".radar");
   var $hitscreen = $(".hitscreen");
   var $stunscreen = $(".stunscreen");
+  var $stunbar = $(".stunbar");
   var $speedbox = $(".speedbox");
   var $speedlabel = $(".speedlabel");
   var $timer = $("#timer span");
@@ -107,6 +108,7 @@ $(function () {
       break;
     // Stunned animation
       case "stun":
+        $stunbar.css({width: "100%"}).animate({width: 0}, 1500);
         $stunscreen.animate({opacity: 0.7}, 300);
       if (stunnedtimer) {
         clearTimeout(stunnedtimer);
