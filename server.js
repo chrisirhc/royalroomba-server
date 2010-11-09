@@ -26,6 +26,10 @@ var RABBITMQHOST = "localhost";
 var WEBCAMIPS = [];
 var GAME_LENGTH = 180; // in seconds
 
+/** Global **/
+var gameScores = [];
+var gameOver = false;
+
 var i = 0;
 for (i = 2; i < process.argv.length; i++) {
   WEBCAMIPS.push(process.argv[i]);
@@ -82,6 +86,7 @@ var Roomba = function Roomba() {
 /** Assume that the roomba has been started **/
 for (var i = 0; i < 2; i++) {
   roombaStates[i+1] = new Roomba();
+  gameScores[i] = 0;
 }
 
 function allClientsSend(clients, message) {
@@ -150,14 +155,17 @@ connection.addListener('ready', function () {
           /** Determine whether dead **/
           if (roombaStates[roombaId].hp <= 0) {
             roombaStates[roombaId].hp = 0;
-            /** Death! **/
-            allClientsSend(client, "death:");
-            ex.publish("roomba" + roombaId, "STOP");
-            /** Make sure it doesn't revive **/
-            if(roombaStates[roombaId].stunned) {
-              clearTimeout(roombaStates[roombaId].stunned);
+            if (!gameOver) {
+              setGameOver(roombaId);
+              /** Death! **/
+              allClientsSend(client, "death:");
+              ex.publish("roomba" + roombaId, "STOP");
+              /** Make sure it doesn't revive **/
+              if(roombaStates[roombaId].stunned) {
+                clearTimeout(roombaStates[roombaId].stunned);
+              }
+              roombaStates[roombaId].stunned = true;
             }
-            roombaStates[roombaId].stunned = true;
           } else {
             roombaStates[roombaId].beingHit = false;
             allClientsSend(client, "imhitend:");
@@ -195,15 +203,18 @@ connection.addListener('ready', function () {
           roombaStates[roombaId].hp -= 30;
           if (roombaStates[roombaId].hp <= 0) {
             roombaStates[roombaId].hp = 0;
-            /** Death! **/
-            allClientsSend(client, "death:");
-            ex.publish("roomba" + roombaId, "STOP");
-            /** Make sure it doesn't revive **/
-            if(roombaStates[roombaId].stunned) {
-              clearTimeout(roombaStates[roombaId].stunned);
+            if (!gameOver) {
+              /** Death! **/
+              setGameOver(roombaId);
+              allClientsSend(client, "death:");
+              ex.publish("roomba" + roombaId, "STOP");
+              /** Make sure it doesn't revive **/
+              if(roombaStates[roombaId].stunned) {
+                clearTimeout(roombaStates[roombaId].stunned);
+              }
+              /** Stop any activities once and for all **/
+              roombaStates[roombaId].stunned = true;
             }
-            /** Stop any activities once and for all **/
-            roombaStates[roombaId].stunned = true;
           } else {
             if(roombaStates[roombaId].stunned) {
               clearTimeout(roombaStates[roombaId].stunned);
@@ -223,11 +234,38 @@ connection.addListener('ready', function () {
     }
   });
 
+  function setGameOver(loserId) {
+    if(loserId == 1) {
+      // RoombaId 2 wins
+      gameScores[1]++;
+    } else {
+      // RoombaId 1 wins
+      gameScores[0]++;
+    }
+    gameOver = true;
+    /** Handle the timer interval **/
+    if (timerInterval) {
+      clearInterval(timerInterval);
+      timerInterval = null;
+    }
+    sendScores();
+  }
+
+  function sendScores() {
+      var scoreStr = "" + gameScores[0];
+      for (i = 1; i < gameScores.length; i++) {
+        scoreStr += "-" + gameScores[i];
+      }
+      controllerSocket.broadcast("score:" + scoreStr);
+  }
+
   function sendAllVars(roombaNo, client) {
     if (roombaStates[roombaNo] && client) {
-      for (var i in roombaStates) {
+      var i;
+      for (i in roombaStates) {
         client.send("hp:" + i + "-" + roombaStates[i].hp);
       }
+      sendScores();
       client.send("speed:" + roombaStates[roombaNo].speed);
       client.send("coord:" + roombaStates[roombaNo].enemylocation.join(",") +
       "," + roombaStates[roombaNo].angle);
@@ -338,6 +376,7 @@ connection.addListener('ready', function () {
       }
     }
     ex.publish("server", "RESETVAR");
+    gameOver = false;
 
     /** send start to all clients **/
     controllerSocket.broadcast("start:");
@@ -367,6 +406,7 @@ connection.addListener('ready', function () {
   serv.get('/reset', function (req, res, next) {
     // Revive all dead screens
     controllerSocket.broadcast("imhitend:");
+    gameOver = false;
 
     for (var i in roombaStates) {
       roombaStates[i] = new Roomba();
@@ -388,5 +428,10 @@ connection.addListener('ready', function () {
     ex.publish("server", "RESETVAR");
     res.send(200);
     res.end();
+  });
+  serv.get('/resetscore', function (req, res, next) {
+    for (var i = 0; i < 2; i++) {
+      gameScores[i] = 0;
+    }
   });
 });

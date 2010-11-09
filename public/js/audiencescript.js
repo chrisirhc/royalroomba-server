@@ -36,6 +36,7 @@ $(function () {
     var $hplabel = $("#roomba" + n + "-hp-container .hplabel");
     var $speedlabel = $(".speedlabel", $roomba);
     var $timer = $("#timer span");
+    var $score = $("#scorebar");
 
     var stunnedtimer = null;
 
@@ -59,6 +60,9 @@ $(function () {
             '-webkit-transform': "rotate(" + coords[2] + "deg)",
             '-moz-transform': "rotate(" + coords[2] + "deg)"
           });
+          break;
+          case "score":
+            $score.text(data);
           break;
           case "timer":
             if (n == 1) {
