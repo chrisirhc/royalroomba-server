@@ -99,6 +99,10 @@ $(function () {
       var $hpwidth = parseFloat(data)/100.0 * arr$hpbox[roombaNo].width();
       arr$hplabel[roombaNo].text(data);
       arr$hpval[roombaNo].animate({ width: parseInt($hpwidth) }, 100);
+    // Hacked out sound for you win when opponent goes to 0
+      if(data == 0 && roombaNo != CONTROLLER_NUMBER) {
+        (new Audio("/audio/uwin.ogg")).play();
+      }
       break;
 	  // Speed updates
       case "speed":
@@ -127,6 +131,7 @@ $(function () {
       break;
 	  // Death Animation
       case "death":
+      (new Audio("/audio/ulose.ogg")).play();
       $hitscreen.animate({opacity: 0.9});
       break;
       }

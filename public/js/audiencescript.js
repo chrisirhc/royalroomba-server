@@ -103,6 +103,8 @@ $(function () {
           break;
           // Death Animation
           case "death":
+            // Hacked out way to find the opposite
+            (new Audio("/audio/win" + (3-n) + ".ogg")).play();
             $hitscreen.animate({opacity: 0.7});
           break;
         }
