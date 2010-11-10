@@ -234,14 +234,14 @@ body {
 	width: 200px;
 	height: 200px;
 }
-.hitscreen, .stunscreen, .wallscreen {
+.hitscreen, .stunscreen, .deathscreen {
 	position: absolute;
 	top: 0;
 	width: 100%;
 	height: 100%;
 	background: red;
 	opacity: 0;
-	font-size: 320px;
+	/* font-size: 320px; */
 	text-align: center;
 }
 .hitscreen {
@@ -249,7 +249,8 @@ body {
 	background-repeat: no-repeat;
 	background-image: url(../images/kenahit.png);
 }
-.wallscreen {
+.deathscreen {
+  background: red;
 }
 .stunscreen {
 	background-color: blue;
@@ -257,6 +258,23 @@ body {
 	background-repeat: no-repeat;
 	background-image: url(../images/stunned.png);
 }
+.hitscreen span, .stunscreen span, .deathscreen span {
+  position: absolute;
+  top: 50%;
+  width: 100%;
+  left: 0;
+  margin-top: 90px;
+  font-size: 28px;
+  text-align: center;
+}
+.stunscreen span {
+  background: #5AD4FC;
+}
+
+.hitscreen span {
+  background: #F7DD28;
+}
+
 .stunbar {
   background-color: white;
   height: 20%;

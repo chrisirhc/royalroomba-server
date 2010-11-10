@@ -32,10 +32,14 @@ $(function () {
     arr$hpbox[x] = $("#roomba" + x + "-hp-container .hpbox");
     arr$hpval[x] = $("#roomba" + x + "-hp-container .hpval");
   }
+  /** Opposite one must be lower opacity **/
+  arr$hpval[3 - CONTROLLER_NUMBER].animate({ opacity: 0.5 });
+
   var $speedval = $(".speedval");
   var $radar = $(".radar");
   var $hitscreen = $(".hitscreen");
   var $stunscreen = $(".stunscreen");
+  var $deathscreen = $(".deathscreen");
   var $stunbar = $(".stunbar");
   var $speedbox = $(".speedbox");
   var $speedlabel = $(".speedlabel");
@@ -52,15 +56,18 @@ $(function () {
       new Audio("/audio/1.ogg"),
       new Audio("/audio/go.ogg")
     ];
-    console.log("countdown");
+    $timer.text("3");
     countdownsounds[0].play();
     setTimeout(function () {
+      $timer.text("2");
       countdownsounds[1].play();
     }, 1000);
     setTimeout(function () {
+      $timer.text("1");
       countdownsounds[2].play();
     }, 2000);
     setTimeout(function () {
+      $timer.text("GO!");
       countdownsounds[3].play();
     }, 3000);
   }
@@ -85,6 +92,7 @@ $(function () {
         });
       break;
       case "start":
+        $deathscreen.animate({opacity: 0});
         countdown();
         break;
       // Timer updates
@@ -132,7 +140,7 @@ $(function () {
 	  // Death Animation
       case "death":
       (new Audio("/audio/ulose.ogg")).play();
-      $hitscreen.animate({opacity: 0.9});
+      $deathscreen.animate({opacity: 0.9});
       break;
       }
     }

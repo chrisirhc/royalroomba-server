@@ -4,6 +4,41 @@ $(function () {
   roombaDisplay(1);
   roombaDisplay(2);
 
+  var countdownsounds;
+
+  var $timer = $("#timer span");
+  function countdown() {
+    stopmusic();
+    countdownsounds = [
+      new Audio("/audio/3.ogg"),
+      new Audio("/audio/2.ogg"),
+      new Audio("/audio/1.ogg"),
+      new Audio("/audio/go.ogg"),
+      new Audio("/audio/backgroundmusic.ogg")
+    ];
+    $timer.text("3");
+    countdownsounds[0].play();
+    setTimeout(function () {
+      $timer.text("2");
+      countdownsounds[1].play();
+    }, 1000);
+    setTimeout(function () {
+      $timer.text("1");
+      countdownsounds[2].play();
+    }, 2000);
+    setTimeout(function () {
+      $timer.text("GO!");
+      countdownsounds[3].play();
+    }, 3000);
+    setTimeout(function () {
+      countdownsounds[4].play();
+    }, 4000);
+  }
+
+  function stopmusic() {
+    countdownsounds && countdownsounds[4] && countdownsounds[4].pause();
+  }
+
   function roombaDisplay(n) {
     var socket;
     var socketConnected = false;
@@ -31,14 +66,16 @@ $(function () {
     var $radar = $(".radar", $roomba);
     var $hitscreen = $(".hitscreen", $roomba);
     var $stunscreen = $(".stunscreen", $roomba);
+    var $deathscreen = $(".deathscreen", $roomba);
     var $hpbox = $("#roomba" + n + "-hp-container .hpbox");
     var $speedbox = $(".speedbox", $roomba);
     var $hplabel = $("#roomba" + n + "-hp-container .hplabel");
     var $speedlabel = $(".speedlabel", $roomba);
-    var $timer = $("#timer span");
     var $score = $("#scorebar");
 
     var stunnedtimer = null;
+
+    var backgroundmusic = null;
 
     socket.on('message', onMessage);
 
@@ -50,6 +87,13 @@ $(function () {
         data = datatype[2];
         datatype = datatype[1];
         switch (datatype) {
+          case "start":
+          /** Play the sounds **/
+          $deathscreen.animate({opacity: 0});;
+          if (n == 1) { // only for one of them
+            countdown();
+          }
+          break;
           // Minimap Coordinates
           case "coord":
             coords = data.split(",");
@@ -89,6 +133,7 @@ $(function () {
           break;
           // Stunned animation
           case "stun":
+            (new Audio("/audio/shot.ogg")).play();
             $stunscreen.animate({opacity: 0.7}, 300);
             if (stunnedtimer) {
               clearTimeout(stunnedtimer);
@@ -99,6 +144,7 @@ $(function () {
           break;
           // Hit Animation
           case "imhit":
+            (new Audio("/audio/crash.ogg")).play();
             $hitscreen.animate({opacity: 0.7});
           break;
           // End of hit
@@ -107,9 +153,10 @@ $(function () {
           break;
           // Death Animation
           case "death":
+            stopmusic();
             // Hacked out way to find the opposite
             (new Audio("/audio/win" + (3-n) + ".ogg")).play();
-            $hitscreen.animate({opacity: 0.7});
+            $deathscreen.animate({opacity: 0.7});
           break;
         }
       }

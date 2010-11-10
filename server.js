@@ -39,8 +39,8 @@ for (i = 2; i < process.argv.length; i++) {
 
 serv.use(function (req, res) {
   res.writeHead(200, {'Content-Type': 'text/html'});
-  res.write('<a href="live.html">Live feed</a>\n<a href="control/1">Control 1</a>\n<a href="control/2">Control 2</a>');
-  res.write('<h1>Raw log</h1>' + logg);
+  res.write('<a href="audience.html">Spectator View</a>\n<a href="live.html">Live feed</a>\n<a href="control/1">Control 1</a>\n<a href="control/2">Control 2</a>');
+  // res.write('<h1>Raw log</h1>' + logg);
   res.end();
 });
 
@@ -433,5 +433,6 @@ connection.addListener('ready', function () {
     for (var i = 0; i < 2; i++) {
       gameScores[i] = 0;
     }
+    sendScores();
   });
 });
