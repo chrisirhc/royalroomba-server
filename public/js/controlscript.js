@@ -40,6 +40,7 @@ $(function () {
   var $hitscreen = $(".hitscreen");
   var $stunscreen = $(".stunscreen");
   var $deathscreen = $(".deathscreen");
+  var $winscreen = $(".winscreen");
   var $stunbar = $(".stunbar");
   var $speedbox = $(".speedbox");
   var $speedlabel = $(".speedlabel");
@@ -92,8 +93,10 @@ $(function () {
         });
       break;
       case "start":
-        $deathscreen.animate({opacity: 0});
         countdown();
+      case "reset":
+        $deathscreen.animate({opacity: 0});
+        $winscreen.animate({opacity: 0});
         break;
       // Timer updates
       case "timer":
@@ -110,6 +113,7 @@ $(function () {
     // Hacked out sound for you win when opponent goes to 0
       if(data == 0 && roombaNo != CONTROLLER_NUMBER) {
         (new Audio("/audio/uwin.ogg")).play();
+        $winscreen.animate({opacity: 0.7});
       }
       break;
 	  // Speed updates

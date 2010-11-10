@@ -66,6 +66,7 @@ $(function () {
     var $radar = $(".radar", $roomba);
     var $hitscreen = $(".hitscreen", $roomba);
     var $stunscreen = $(".stunscreen", $roomba);
+    var $winscreen = $(".winscreen", $roomba);
     var $deathscreen = $(".deathscreen", $roomba);
     var $hpbox = $("#roomba" + n + "-hp-container .hpbox");
     var $speedbox = $(".speedbox", $roomba);
@@ -89,10 +90,12 @@ $(function () {
         switch (datatype) {
           case "start":
           /** Play the sounds **/
-          $deathscreen.animate({opacity: 0});;
           if (n == 1) { // only for one of them
             countdown();
           }
+          case "reset":
+          $deathscreen.animate({opacity: 0});;
+          $winscreen.animate({opacity: 0});;
           break;
           // Minimap Coordinates
           case "coord":
@@ -156,7 +159,8 @@ $(function () {
             stopmusic();
             // Hacked out way to find the opposite
             (new Audio("/audio/win" + (3-n) + ".ogg")).play();
-            $deathscreen.animate({opacity: 0.7});
+            $("#win" + (3-n)).animate({opacity: 0.7});
+            $deathscreen.animate({opacity: 0.9});
           break;
         }
       }

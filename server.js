@@ -423,7 +423,7 @@ connection.addListener('ready', function () {
       timerInterval = null;
     }
     /** Show - as the number of seconds **/
-    controllerSocket.broadcast("timer:-");
+    controllerSocket.broadcast("timer:RR");
 
     ex.publish("server", "RESETVAR");
     res.send(200);

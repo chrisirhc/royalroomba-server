@@ -234,7 +234,7 @@ body {
 	width: 200px;
 	height: 200px;
 }
-.hitscreen, .stunscreen, .deathscreen {
+.hitscreen, .stunscreen, .deathscreen, .winscreen {
 	position: absolute;
 	top: 0;
 	width: 100%;
@@ -249,6 +249,9 @@ body {
 	background-repeat: no-repeat;
 	background-image: url(../images/kenahit.png);
 }
+.winscreen {
+  background: white;
+}
 .deathscreen {
   background: red;
 }
@@ -258,7 +261,7 @@ body {
 	background-repeat: no-repeat;
 	background-image: url(../images/stunned.png);
 }
-.hitscreen span, .stunscreen span, .deathscreen span {
+.hitscreen span, .stunscreen span, .deathscreen span, .winscreen span {
   position: absolute;
   top: 50%;
   width: 100%;
