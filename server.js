@@ -260,12 +260,15 @@ connection.addListener('ready', function () {
       controllerSocket.broadcast("score:" + scoreStr);
   }
 
+  function sendHPs() {
+    var i;
+    for (i in roombaStates) {
+      controllerSocket.broadcast("hp:" + i + "-" + roombaStates[i].hp);
+    }
+  }
+
   function sendAllVars(roombaNo, client) {
     if (roombaStates[roombaNo] && client) {
-      var i;
-      for (i in roombaStates) {
-        client.send("hp:" + i + "-" + roombaStates[i].hp);
-      }
       sendScores();
       client.send("speed:" + roombaStates[roombaNo].speed);
       client.send("coord:" + roombaStates[roombaNo].enemylocation.join(",") +
@@ -273,6 +276,7 @@ connection.addListener('ready', function () {
       if (roombaStates[roombaNo].hp == 0) {
         client.send("death:");
       }
+      sendHPs();
     }
   }
 
@@ -376,6 +380,7 @@ connection.addListener('ready', function () {
         }
       }
     }
+    sendHPs();
     ex.publish("server", "RESETVAR");
     gameOver = false;
 
