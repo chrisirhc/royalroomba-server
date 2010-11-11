@@ -173,6 +173,7 @@ connection.addListener('ready', function () {
           controllerSocket.broadcast("hp:" + roombaId + "-" + roombaStates[roombaId].hp);
         } else {
           if (!roombaStates[roombaId].beingHit) {
+            ex.publish("roomba-sensorin-" + roombaId, "COLLIDE");
             allClientsSend(client, "imhit:");
             roombaStates[roombaId].beingHit = true;
           }
