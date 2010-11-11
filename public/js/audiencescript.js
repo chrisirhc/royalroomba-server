@@ -7,7 +7,11 @@ $(function () {
   var countdownsounds;
 
   var $timer = $("#timer span");
+  var $countdownscreen = $("#countdownscreen");
+  var $countdownscreenspan = $("#countdownscreen span");
   function countdown() {
+    /** Reset timer to show RR **/
+    $timer.text("RR");
     stopmusic();
     countdownsounds = [
       new Audio("/audio/3.ogg"),
@@ -16,21 +20,23 @@ $(function () {
       new Audio("/audio/go.ogg"),
       new Audio("/audio/backgroundmusic.ogg")
     ];
-    $timer.text("3");
+    $countdownscreenspan.text("3");
+    $countdownscreen.animate({opacity: 1}, 200);
     countdownsounds[0].play();
     setTimeout(function () {
-      $timer.text("2");
+      $countdownscreenspan.text("2");
       countdownsounds[1].play();
     }, 1000);
     setTimeout(function () {
-      $timer.text("1");
+      $countdownscreenspan.text("1");
       countdownsounds[2].play();
     }, 2000);
     setTimeout(function () {
-      $timer.text("GO!");
+      $countdownscreenspan.text("GO!");
       countdownsounds[3].play();
     }, 3000);
     setTimeout(function () {
+      $countdownscreen.animate({opacity: 0}, 200);
       countdownsounds[4].play();
     }, 4000);
   }
