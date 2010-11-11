@@ -72,6 +72,7 @@ $(function () {
     var $radar = $(".radar", $roomba);
     var $hitscreen = $(".hitscreen", $roomba);
     var $stunscreen = $(".stunscreen", $roomba);
+    var $stunbar = $(".stunbar", $roomba);
     var $winscreen = $(".winscreen", $roomba);
     var $deathscreen = $(".deathscreen", $roomba);
     var $hpbox = $("#roomba" + n + "-hp-container .hpbox");
@@ -149,6 +150,7 @@ $(function () {
           // Stunned animation
           case "stun":
             (new Audio("/audio/shot.ogg")).play();
+            $stunbar.css({width: "100%"}).animate({width: 0}, 1500);
             $stunscreen.animate({opacity: 0.7}, 300);
             if (stunnedtimer) {
               clearTimeout(stunnedtimer);
