@@ -18,6 +18,8 @@ $(function () {
       clearTimeout(connectAttemptTimeout);
       connectAttemptTimeout = null;
     }
+    /** Declare the number **/
+    socket.send("DECLARE" + CONTROLLER_NUMBER);
   });
 
   // IDs
@@ -182,12 +184,7 @@ $(function () {
 	
 	// function to send
 	function sendCommand(c){
-		// do something
-		try{
-			socket.send(c); 
-		}catch(exception){
-			alert(exception);
-		}
+    socket.send(c);
 	}
   /**
   s denotes start and e denotes end

@@ -64,6 +64,7 @@ $(function () {
         clearTimeout(connectAttemptTimeout);
         connectAttemptTimeout = null;
       }
+      socket.send("DECLARE" + n);
     });
 
     // IDs

@@ -282,18 +282,9 @@ connection.addListener('ready', function () {
 
   // socket.io for controllers
   controllerSocket.on('connection', function (client) {
-    /** Get the roomba number from the resource url **/
-    var roombaNo = client.request.url
-      .replace("/socket.io-controller-", "")
-      .replace(/\/.*$/, "");
+    /** Default is one **/
+    var roombaNo = 1;
     var routingKey = "roomba" + roombaNo;
-    if(!clientMap[roombaNo]) {
-      clientMap[roombaNo] = [];
-    }
-    clientMap[roombaNo].push(client);
-
-    /** Send the initialising info when connected **/
-    sendAllVars(roombaNo, client);
 
     // new client is here!
     client.on('message', function (message) {
@@ -347,13 +338,23 @@ connection.addListener('ready', function () {
         // controllerSocket.broadcast("Boost");
         ex.publish(routingKey, "BOOST");
         break;
-        default:
-        controllerSocket.broadcast("Unused message: " + message);
-      }
-    });
+        // do startup;
+        case "DECLARE2":
+        roombaNo = 2;
+        case "DECLARE1":
+        if(!clientMap[roombaNo]) {
+          clientMap[roombaNo] = [];
+        }
+        clientMap[roombaNo].push(client);
+        /** Send the initialising info when connected **/
+        sendAllVars(roombaNo, client);
 
-    client.on('disconnect', function() {
-      clientMap[roombaNo].splice(clientMap[roombaNo].indexOf(client), 1);
+        /** Clean it up when disconnect **/
+        client.on('disconnect', function() {
+          clientMap[roombaNo].splice(clientMap[roombaNo].indexOf(client), 1);
+        });
+        break;
+      }
     });
 
   }); 
