@@ -250,10 +250,16 @@ body {
 	background-image: url(../images/kenahit.png);
 }
 .winscreen {
-  background: white;
+  background-color: white;
+	background-position: center center;
+	background-repeat: no-repeat;
+	background-image: url(../images/winner.png);
 }
 .deathscreen {
   background: red;
+	background-position: center center;
+	background-repeat: no-repeat;
+	background-image: url(../images/loser.png);
 }
 .stunscreen {
 	background-color: blue;
