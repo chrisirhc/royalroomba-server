@@ -298,12 +298,6 @@ connection.addListener('ready', function () {
         // controllerSocket.broadcast("Accelerate");
         ex.publish(routingKey, "ACCELERATE");
         break;
-        case "er":
-        case "el":
-        case "eb":
-        case "ef":
-        /** Add to roombas to slow down no more.. **/
-        break;
         /** Back accelerate down **/
         case "sb":
         // controllerSocket.broadcast("Deccelerate (Reverse)");
