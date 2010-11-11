@@ -45,6 +45,8 @@ $(function () {
   var $speedbox = $(".speedbox");
   var $speedlabel = $(".speedlabel");
   var $timer = $("#timer span");
+  var $countdownscreen = $("#countdownscreen");
+  var $countdownscreenspan = $("#countdownscreen span");
 
   var stunnedtimer = null;
 
@@ -57,18 +59,20 @@ $(function () {
       new Audio("/audio/1.ogg"),
       new Audio("/audio/go.ogg")
     ];
-    $timer.text("3");
+    $countdownscreenspan.text("3");
+    $countdownscreen.animate({opacity: 1}, 200);
     countdownsounds[0].play();
     setTimeout(function () {
-      $timer.text("2");
+      $countdownscreenspan.text("2");
       countdownsounds[1].play();
     }, 1000);
     setTimeout(function () {
-      $timer.text("1");
+      $countdownscreenspan.text("1");
       countdownsounds[2].play();
     }, 2000);
     setTimeout(function () {
-      $timer.text("GO!");
+      $countdownscreenspan.text("GO!");
+      $countdownscreen.animate({opacity: 0}, 200);
       countdownsounds[3].play();
     }, 3000);
   }
