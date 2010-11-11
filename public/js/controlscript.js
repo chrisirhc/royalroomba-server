@@ -95,6 +95,8 @@ $(function () {
       case "start":
         countdown();
       case "reset":
+        arr$hpval[1].css({background: "blue"});
+        arr$hpval[2].css({background: "blue"});
         $deathscreen.animate({opacity: 0});
         $winscreen.animate({opacity: 0});
         break;
@@ -110,6 +112,11 @@ $(function () {
       var $hpwidth = parseFloat(data)/100.0 * arr$hpbox[roombaNo].width();
       arr$hplabel[roombaNo].text(data);
       arr$hpval[roombaNo].animate({ width: parseInt($hpwidth) }, 100);
+      if (data <= 20) {
+        arr$hpval[roombaNo].css({background: "red"});
+      } else if (data <= 50) {
+        arr$hpval[roombaNo].css({background: "purple"});
+      }
     // Hacked out sound for you win when opponent goes to 0
       if(data == 0 && roombaNo != CONTROLLER_NUMBER) {
         (new Audio("/audio/uwin.ogg")).play();

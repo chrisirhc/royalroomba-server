@@ -100,6 +100,7 @@ $(function () {
             countdown();
           }
           case "reset":
+          $hpval.css({background: "blue"});
           $deathscreen.animate({opacity: 0});;
           $winscreen.animate({opacity: 0});;
           break;
@@ -130,6 +131,11 @@ $(function () {
             data = data[1];
             var $hpwidth = parseFloat(data)/100.0 * $hpbox.width();
             $hplabel.text(data);
+            if (data <= 20) {
+              $hpval.css({background: "red"});
+            } else if (data <= 50) {
+              $hpval.css({background: "purple"});
+            }
             $hpval.animate({ width: parseInt($hpwidth) }, 100);
           }
           break;
